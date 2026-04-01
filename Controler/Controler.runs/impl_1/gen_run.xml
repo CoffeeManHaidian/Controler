@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GenRun Id="impl_1" LaunchPart="xc7k325tffg900-2" LaunchTime="1774948840">
+  <File Type="PWROPT-DCP" Name="pcie_cmd_to_optical_hw_bringup_top_pwropt.dcp"/>
+  <File Type="ROUTE-PWR" Name="pcie_cmd_to_optical_hw_bringup_top_power_routed.rpt"/>
+  <File Type="PA-TCL" Name="pcie_cmd_to_optical_hw_bringup_top.tcl"/>
+  <File Type="ROUTE-PWR-SUM" Name="pcie_cmd_to_optical_hw_bringup_top_power_summary_routed.pb"/>
+  <File Type="REPORTS-TCL" Name="pcie_cmd_to_optical_hw_bringup_top_reports.tcl"/>
+  <File Type="BG-DRC" Name="pcie_cmd_to_optical_hw_bringup_top.drc"/>
+  <File Type="OPT-METHODOLOGY-DRC" Name="pcie_cmd_to_optical_hw_bringup_top_methodology_drc_opted.rpt"/>
+  <File Type="INIT-TIMING" Name="pcie_cmd_to_optical_hw_bringup_top_timing_summary_init.rpt"/>
+  <File Type="OPT-HWDEF" Name="pcie_cmd_to_optical_hw_bringup_top.hwdef"/>
+  <File Type="OPT-DCP" Name="pcie_cmd_to_optical_hw_bringup_top_opt.dcp"/>
+  <File Type="OPT-DRC" Name="pcie_cmd_to_optical_hw_bringup_top_drc_opted.rpt"/>
+  <File Type="OPT-TIMING" Name="pcie_cmd_to_optical_hw_bringup_top_timing_summary_opted.rpt"/>
+  <File Type="PWROPT-DRC" Name="pcie_cmd_to_optical_hw_bringup_top_drc_pwropted.rpt"/>
+  <File Type="PWROPT-TIMING" Name="pcie_cmd_to_optical_hw_bringup_top_timing_summary_pwropted.rpt"/>
+  <File Type="PLACE-DCP" Name="pcie_cmd_to_optical_hw_bringup_top_placed.dcp"/>
+  <File Type="PLACE-IO" Name="pcie_cmd_to_optical_hw_bringup_top_io_placed.rpt"/>
+  <File Type="PLACE-CLK" Name="pcie_cmd_to_optical_hw_bringup_top_clock_utilization_placed.rpt"/>
+  <File Type="PLACE-UTIL" Name="pcie_cmd_to_optical_hw_bringup_top_utilization_placed.rpt"/>
+  <File Type="PLACE-UTIL-PB" Name="pcie_cmd_to_optical_hw_bringup_top_utilization_placed.pb"/>
+  <File Type="PLACE-CTRL" Name="pcie_cmd_to_optical_hw_bringup_top_control_sets_placed.rpt"/>
+  <File Type="PLACE-SIMILARITY" Name="pcie_cmd_to_optical_hw_bringup_top_incremental_reuse_placed.rpt"/>
+  <File Type="PLACE-PRE-SIMILARITY" Name="pcie_cmd_to_optical_hw_bringup_top_incremental_reuse_pre_placed.rpt"/>
+  <File Type="PLACE-TIMING" Name="pcie_cmd_to_optical_hw_bringup_top_timing_summary_placed.rpt"/>
+  <File Type="POSTPLACE-PWROPT-DCP" Name="pcie_cmd_to_optical_hw_bringup_top_postplace_pwropt.dcp"/>
+  <File Type="POSTPLACE-PWROPT-TIMING" Name="pcie_cmd_to_optical_hw_bringup_top_timing_summary_postplace_pwropted.rpt"/>
+  <File Type="PHYSOPT-DCP" Name="pcie_cmd_to_optical_hw_bringup_top_physopt.dcp"/>
+  <File Type="PHYSOPT-DRC" Name="pcie_cmd_to_optical_hw_bringup_top_drc_physopted.rpt"/>
+  <File Type="BG-BIT" Name="pcie_cmd_to_optical_hw_bringup_top.bit"/>
+  <File Type="PHYSOPT-TIMING" Name="pcie_cmd_to_optical_hw_bringup_top_timing_summary_physopted.rpt"/>
+  <File Type="ROUTE-ERROR-DCP" Name="pcie_cmd_to_optical_hw_bringup_top_routed_error.dcp"/>
+  <File Type="ROUTE-DCP" Name="pcie_cmd_to_optical_hw_bringup_top_routed.dcp"/>
+  <File Type="ROUTE-BLACKBOX-DCP" Name="pcie_cmd_to_optical_hw_bringup_top_routed_bb.dcp"/>
+  <File Type="ROUTE-DRC" Name="pcie_cmd_to_optical_hw_bringup_top_drc_routed.rpt"/>
+  <File Type="ROUTE-DRC-PB" Name="pcie_cmd_to_optical_hw_bringup_top_drc_routed.pb"/>
+  <File Type="BITSTR-MSK" Name="pcie_cmd_to_optical_hw_bringup_top.msk"/>
+  <File Type="ROUTE-DRC-RPX" Name="pcie_cmd_to_optical_hw_bringup_top_drc_routed.rpx"/>
+  <File Type="BG-BGN" Name="pcie_cmd_to_optical_hw_bringup_top.bgn"/>
+  <File Type="ROUTE-METHODOLOGY-DRC" Name="pcie_cmd_to_optical_hw_bringup_top_methodology_drc_routed.rpt"/>
+  <File Type="BITSTR-RBT" Name="pcie_cmd_to_optical_hw_bringup_top.rbt"/>
+  <File Type="ROUTE-METHODOLOGY-DRC-RPX" Name="pcie_cmd_to_optical_hw_bringup_top_methodology_drc_routed.rpx"/>
+  <File Type="BG-BIN" Name="pcie_cmd_to_optical_hw_bringup_top.bin"/>
+  <File Type="ROUTE-METHODOLOGY-DRC-PB" Name="pcie_cmd_to_optical_hw_bringup_top_methodology_drc_routed.pb"/>
+  <File Type="ROUTE-PWR-RPX" Name="pcie_cmd_to_optical_hw_bringup_top_power_routed.rpx"/>
+  <File Type="ROUTE-STATUS" Name="pcie_cmd_to_optical_hw_bringup_top_route_status.rpt"/>
+  <File Type="ROUTE-STATUS-PB" Name="pcie_cmd_to_optical_hw_bringup_top_route_status.pb"/>
+  <File Type="ROUTE-TIMINGSUMMARY" Name="pcie_cmd_to_optical_hw_bringup_top_timing_summary_routed.rpt"/>
+  <File Type="ROUTE-TIMING-PB" Name="pcie_cmd_to_optical_hw_bringup_top_timing_summary_routed.pb"/>
+  <File Type="ROUTE-TIMING-RPX" Name="pcie_cmd_to_optical_hw_bringup_top_timing_summary_routed.rpx"/>
+  <File Type="ROUTE-SIMILARITY" Name="pcie_cmd_to_optical_hw_bringup_top_incremental_reuse_routed.rpt"/>
+  <File Type="RDI-RDI" Name="pcie_cmd_to_optical_hw_bringup_top.vdi"/>
+  <File Type="ROUTE-CLK" Name="pcie_cmd_to_optical_hw_bringup_top_clock_utilization_routed.rpt"/>
+  <File Type="POSTROUTE-PHYSOPT-DCP" Name="pcie_cmd_to_optical_hw_bringup_top_postroute_physopt.dcp"/>
+  <File Type="POSTROUTE-PHYSOPT-BLACKBOX-DCP" Name="pcie_cmd_to_optical_hw_bringup_top_postroute_physopt_bb.dcp"/>
+  <File Type="POSTROUTE-PHYSOPT-TIMING" Name="pcie_cmd_to_optical_hw_bringup_top_timing_summary_postroute_physopted.rpt"/>
+  <File Type="POSTROUTE-PHYSOPT-TIMING-PB" Name="pcie_cmd_to_optical_hw_bringup_top_timing_summary_postroute_physopted.pb"/>
+  <File Type="POSTROUTE-PHYSOPT-TIMING-RPX" Name="pcie_cmd_to_optical_hw_bringup_top_timing_summary_postroute_physopted.rpx"/>
+  <File Type="BITSTR-NKY" Name="pcie_cmd_to_optical_hw_bringup_top.nky"/>
+  <File Type="BITSTR-BMM" Name="pcie_cmd_to_optical_hw_bringup_top_bd.bmm"/>
+  <File Type="BITSTR-MMI" Name="pcie_cmd_to_optical_hw_bringup_top.mmi"/>
+  <File Type="BITSTR-LTX" Name="debug_nets.ltx"/>
+  <File Type="BITSTR-LTX" Name="pcie_cmd_to_optical_hw_bringup_top.ltx"/>
+  <File Type="BITSTR-SYSDEF" Name="pcie_cmd_to_optical_hw_bringup_top.sysdef"/>
+  <File Type="WBT-USG" Name="usage_statistics_webtalk.html"/>
+  <FileSet Name="sources" Type="DesignSrcs" RelSrcDir="$PSRCDIR/sources_1">
+    <Filter Type="Srcs"/>
+    <File Path="$PSRCDIR/sources_1/new/async_gtx_word_fifo.v">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/custom_gtx_phy_gtwizard0.v">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/custom_optical_tx.v">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/optical_stream_to_gtx32.v">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/pcie_bar_cmd_rx.v">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/pcie_cmd_to_optical_board_top.v">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/pcie_cmd_to_optical_gtx_top.v">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/pcie_cmd_to_optical_top.v">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/simple_sync_fifo.v">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/pcie_cmd_to_optical_hw_bringup_top.v">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/udp_frame_tx_min.v">
+      <FileInfo>
+        <Attr Name="AutoDisabled" Val="1"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/min_pcie_to_udp_debug_top.v">
+      <FileInfo>
+        <Attr Name="AutoDisabled" Val="1"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/bd/tengig_integration_bd/tengig_integration_bd.bd">
+      <FileInfo>
+        <Attr Name="AutoDisabled" Val="1"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/custom_gtx_phy_stub.v">
+      <FileInfo>
+        <Attr Name="AutoDisabled" Val="1"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <Config>
+      <Option Name="DesignMode" Val="RTL"/>
+      <Option Name="TopModule" Val="pcie_cmd_to_optical_hw_bringup_top"/>
+    </Config>
+  </FileSet>
+  <FileSet Name="constrs_in" Type="Constrs" RelSrcDir="$PSRCDIR/constrs_1">
+    <Filter Type="Constrs"/>
+    <File Path="$PSRCDIR/constrs_1/imports/Controler/clk_only.xdc">
+      <FileInfo>
+        <Attr Name="UserDisabled" Val="1"/>
+        <Attr Name="ImportPath" Val="$PPRDIR/clk_only.xdc"/>
+        <Attr Name="ImportTime" Val="1774427412"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/constrs_1/new/pcie_cmd_to_optical_gtx_top.xdc">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/constrs_1/new/pcie_cmd_to_optical_board_top.xdc">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+      </FileInfo>
+    </File>
+    <Config>
+      <Option Name="ConstrsType" Val="XDC"/>
+    </Config>
+  </FileSet>
+  <Strategy Version="1" Minor="2">
+    <StratHandle Name="Vivado Implementation Defaults" Flow="Vivado Implementation 2017"/>
+    <Step Id="init_design"/>
+    <Step Id="opt_design"/>
+    <Step Id="power_opt_design"/>
+    <Step Id="place_design"/>
+    <Step Id="post_place_power_opt_design"/>
+    <Step Id="phys_opt_design"/>
+    <Step Id="route_design"/>
+    <Step Id="post_route_phys_opt_design"/>
+    <Step Id="write_bitstream"/>
+  </Strategy>
+  <BlockFileSet Type="BlockSrcs" Name="gtwizard_0"/>
+</GenRun>

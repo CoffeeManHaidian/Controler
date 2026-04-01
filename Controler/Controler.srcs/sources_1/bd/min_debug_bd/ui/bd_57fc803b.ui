@@ -1,0 +1,26 @@
+{
+   ExpandedHierarchyInLayout: "",
+   guistr: "# # String gsaved with Nlview 6.6.11  2017-06-12 bk=1.3860 VDI=40 GEI=35 GUI=JA:1.6
+#  -string -flagsOSRD
+preplace port clk -pg 1 -y 30 -defaultsOSRD
+preplace inst vio_0 -pg 1 -lvl 1 -y 190 -defaultsOSRD
+preplace inst xlconstant_0 -pg 1 -lvl 1 -y 60 -defaultsOSRD
+preplace inst min_pcie_to_udp_debug_top_0 -pg 1 -lvl 2 -y 170 -defaultsOSRD
+preplace inst ila_0 -pg 1 -lvl 3 -y 140 -defaultsOSRD
+preplace netloc min_pcie_to_udp_debug_top_0_tx_frame_count 1 2 1 N
+preplace netloc min_pcie_to_udp_debug_top_0_tx_axis_tkeep 1 2 1 N
+preplace netloc vio_0_probe_out0 1 1 2 270 60 730
+preplace netloc vio_0_probe_out1 1 1 2 280 280 730
+preplace netloc xlconstant_0_dout 1 1 1 260
+preplace netloc clk_1 1 0 3 20 10 280 40 730
+preplace netloc min_pcie_to_udp_debug_top_0_tx_axis_tvalid 1 2 1 N
+preplace netloc vio_0_probe_out2 1 1 2 270 290 740
+preplace netloc min_pcie_to_udp_debug_top_0_tx_axis_tlast 1 2 1 N
+preplace netloc min_pcie_to_udp_debug_top_0_tx_axis_tdata 1 2 1 N
+preplace netloc min_pcie_to_udp_debug_top_0_status_reg 1 2 1 N
+levelinfo -pg 1 0 160 530 930 1030 -top -250 -bot 1080
+",
+}
+{
+   da_clkrst_cnt: "1",
+}

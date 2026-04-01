@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Root MajorVersion="0" MinorVersion="33">
+  <CompositeFile CompositeFileTopName="tengig_integration_bd" CanBeSetAsTop="false" CanDisplayChildGraph="true">
+    <Description>Composite Fileset</Description>
+    <Generation Name="SYNTHESIS" State="STALE" Timestamp="1774577119"/>
+    <Generation Name="IMPLEMENTATION" State="STALE" Timestamp="1774577119"/>
+    <Generation Name="SIMULATION" State="STALE" Timestamp="1774577119"/>
+    <Generation Name="HW_HANDOFF" State="STALE" Timestamp="1774577119"/>
+    <FileCollection Name="SOURCES" Type="SOURCES">
+      <File Name="ip\tengig_integration_bd_pcie_cmd_to_ten_gig_mac_top_0_0\tengig_integration_bd_pcie_cmd_to_ten_gig_mac_top_0_0.xci" Type="IP">
+        <Instance HierarchyPath="pcie_cmd_to_ten_gig_mac_top_0"/>
+        <Properties IsEditable="false" IsVisible="true" Timestamp="0" IsTrackable="true" IsStatusTracked="true"/>
+        <Library Name="xil_defaultlib"/>
+        <UsedIn Val="SYNTHESIS"/>
+        <UsedIn Val="IMPLEMENTATION"/>
+        <UsedIn Val="SIMULATION"/>
+      </File>
+    </FileCollection>
+  </CompositeFile>
+</Root>

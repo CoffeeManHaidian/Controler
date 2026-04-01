@@ -1,0 +1,12 @@
+# compile verilog/system verilog design source files
+verilog xil_defaultlib  \
+"../../../../Controler.srcs/sources_1/new/pcie_bar_cmd_rx.v" \
+"../../../../Controler.srcs/sources_1/new/simple_sync_fifo.v" \
+"../../../../Controler.srcs/sources_1/new/udp_frame_tx_min.v" \
+"../../../../Controler.srcs/sources_1/new/min_pcie_to_udp_top.v" \
+
+# compile glbl module
+verilog xil_defaultlib "glbl.v"
+
+# Do not sort compile order
+nosort

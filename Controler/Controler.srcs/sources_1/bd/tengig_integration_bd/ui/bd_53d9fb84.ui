@@ -1,0 +1,51 @@
+{
+   ExpandedHierarchyInLayout: "",
+   guistr: "# # String gsaved with Nlview 6.6.11  2017-06-12 bk=1.3860 VDI=40 GEI=35 GUI=JA:1.6
+#  -string -flagsOSRD
+preplace port phy_rx_resetdone -pg 1 -y 250 -defaultsOSRD
+preplace port sfp_tx_fault -pg 1 -y 210 -defaultsOSRD
+preplace port sfp_signal_detect -pg 1 -y 190 -defaultsOSRD
+preplace port phy_tx_resetdone -pg 1 -y 230 -defaultsOSRD
+preplace port s_axis_tx_tlast -pg 1 -y 130 -defaultsOSRD
+preplace port s_axis_tx_tvalid -pg 1 -y 150 -defaultsOSRD
+preplace port phy_block_lock -pg 1 -y 270 -defaultsOSRD
+preplace port s_axis_tx_tready -pg 1 -y 320 -defaultsOSRD
+preplace port tx_clk0 -pg 1 -y 150 -defaultsOSRD
+preplace port tx_axis_aresetn -pg 1 -y 170 -defaultsOSRD
+preplace port rst -pg 1 -y 70 -defaultsOSRD
+preplace port pcie_wr_en -pg 1 -y 90 -defaultsOSRD
+preplace port clk -pg 1 -y 50 -defaultsOSRD
+preplace portBus s_axis_tx_tkeep -pg 1 -y 110 -defaultsOSRD
+preplace portBus s_axis_tx_tdata -pg 1 -y 90 -defaultsOSRD
+preplace portBus pcie_wr_addr -pg 1 -y 110 -defaultsOSRD
+preplace portBus tx_frame_count -pg 1 -y 230 -defaultsOSRD
+preplace portBus tx_ifg_delay -pg 1 -y 190 -defaultsOSRD
+preplace portBus sfp_status -pg 1 -y 250 -defaultsOSRD
+preplace portBus status_reg -pg 1 -y 210 -defaultsOSRD
+preplace portBus pcie_wr_data -pg 1 -y 130 -defaultsOSRD
+preplace inst pcie_cmd_to_ten_gig_mac_top_0 -pg 1 -lvl 2 -y 160 -defaultsOSRD
+preplace netloc pcie_wr_addr_1 1 0 2 NJ 110 N
+preplace netloc phy_rx_resetdone_1 1 0 2 NJ 250 N
+preplace netloc pcie_cmd_to_ten_gig_mac_top_0_tx_frame_count 1 2 1 NJ
+preplace netloc pcie_cmd_to_ten_gig_mac_top_0_s_axis_tx_tvalid 1 2 1 NJ
+preplace netloc pcie_cmd_to_ten_gig_mac_top_0_status_reg 1 2 1 NJ
+preplace netloc rst_1 1 0 2 NJ 70 N
+preplace netloc phy_tx_resetdone_1 1 0 2 NJ 230 N
+preplace netloc sfp_tx_fault_1 1 0 2 NJ 210 N
+preplace netloc pcie_cmd_to_ten_gig_mac_top_0_s_axis_tx_tkeep 1 2 1 NJ
+preplace netloc tx_axis_aresetn_1 1 0 2 NJ 170 N
+preplace netloc pcie_cmd_to_ten_gig_mac_top_0_s_axis_tx_tlast 1 2 1 NJ
+preplace netloc clk_1 1 0 2 NJ 50 N
+preplace netloc pcie_cmd_to_ten_gig_mac_top_0_sfp_status 1 2 1 NJ
+preplace netloc phy_block_lock_1 1 0 2 NJ 270 N
+preplace netloc pcie_cmd_to_ten_gig_mac_top_0_s_axis_tx_tdata 1 2 1 NJ
+preplace netloc s_axis_tx_tready_1 1 0 3 NJ 320 N 320 880
+preplace netloc tx_clk0_1 1 0 2 NJ 150 N
+preplace netloc pcie_wr_data_1 1 0 2 NJ 130 N
+preplace netloc pcie_cmd_to_ten_gig_mac_top_0_tx_ifg_delay 1 2 1 NJ
+preplace netloc sfp_signal_detect_1 1 0 2 NJ 190 N
+preplace netloc pcie_wr_en_1 1 0 2 NJ 90 N
+levelinfo -pg 1 0 250 680 900 -top -90 -bot 660
+",
+}
+
