@@ -16,7 +16,7 @@ proc create_report { reportName command } {
     send_msg_id runtcl-5 warning "$msg"
   }
 }
-set_msg_config -id {Common 17-41} -limit 10000000
+set_msg_config -id {HDL-1065} -limit 10000
 create_project -in_memory -part xc7k325tffg900-2
 
 set_param project.singleFileAddWarning.threshold 0
@@ -34,6 +34,10 @@ read_verilog -library xil_defaultlib {
   D:/Controler/Controler/Controler.srcs/sources_1/new/async_gtx_word_fifo.v
   D:/Controler/Controler/Controler.srcs/sources_1/new/custom_gtx_phy_gtwizard0.v
   D:/Controler/Controler/Controler.srcs/sources_1/new/custom_optical_tx.v
+  D:/Controler/Controler/Controler.srcs/sources_1/new/gtx_rx32_to_stream64.v
+  D:/Controler/Controler/Controler.srcs/sources_1/new/loopback_checker.v
+  D:/Controler/Controler/Controler.srcs/sources_1/new/loopback_debug_block.v
+  D:/Controler/Controler/Controler.srcs/sources_1/new/optical_cmd_rx.v
   D:/Controler/Controler/Controler.srcs/sources_1/new/optical_stream_to_gtx32.v
   D:/Controler/Controler/Controler.srcs/sources_1/new/pcie_bar_cmd_rx.v
   D:/Controler/Controler/Controler.srcs/sources_1/new/pcie_cmd_to_optical_board_top.v
@@ -42,7 +46,7 @@ read_verilog -library xil_defaultlib {
   D:/Controler/Controler/Controler.srcs/sources_1/new/simple_sync_fifo.v
   D:/Controler/Controler/Controler.srcs/sources_1/new/pcie_cmd_to_optical_hw_bringup_top.v
 }
-read_ip -quiet d:/Controler/Controler/Controler.srcs/sources_1/ip/gtwizard_0/gtwizard_0.xci
+read_ip -quiet D:/Controler/Controler/Controler.srcs/sources_1/ip/gtwizard_0/gtwizard_0.xci
 set_property used_in_implementation false [get_files -all d:/Controler/Controler/Controler.srcs/sources_1/ip/gtwizard_0/gtwizard_0.xdc]
 set_property used_in_implementation false [get_files -all d:/Controler/Controler/Controler.srcs/sources_1/ip/gtwizard_0/gtwizard_0_ooc.xdc]
 

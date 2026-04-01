@@ -1,4 +1,6 @@
-module pcie_cmd_to_optical_board_top (
+module pcie_cmd_to_optical_board_top #(
+    parameter ENABLE_LOOPBACK_DEBUG = 1'b0
+) (
     input  wire        SYSCLK_I,
     input  wire        GTREFCLK1_P,
     input  wire        GTREFCLK1_N,
@@ -19,7 +21,15 @@ module pcie_cmd_to_optical_board_top (
     output wire [31:0] tx_frame_count,
     output wire [31:0] optical_status,
     output wire [31:0] gtx_tx_word_count,
-    output wire [31:0] phy_debug_status
+    output wire [31:0] phy_debug_status,
+    output wire [31:0] rx_frame_count,
+    output wire [31:0] crc_error_count,
+    output wire [31:0] format_error_count,
+    output wire [31:0] match_count,
+    output wire [31:0] last_rx_seq,
+    output wire [31:0] last_rx_addr,
+    output wire [31:0] last_rx_data,
+    output wire [31:0] board_test_status
 );
 
     wire [63:0] optical_tx_data_dbg;
@@ -39,6 +49,8 @@ module pcie_cmd_to_optical_board_top (
     wire        phy_tx_resetdone;
     wire        phy_rx_resetdone;
     wire        phy_channel_up;
+    wire [31:0] phy_rx_data;
+    wire        phy_rx_data_valid;
     wire [34:0] tx_fifo_din;
     wire [34:0] tx_fifo_dout;
     wire        tx_fifo_full;
@@ -48,6 +60,13 @@ module pcie_cmd_to_optical_board_top (
     wire        tx_valid_txclk;
     wire        tx_last_txclk;
     wire [1:0]  tx_word_index_txclk;
+    wire [31:0] rx_frame_count_dbg;
+    wire [31:0] crc_error_count_dbg;
+    wire [31:0] format_error_count_dbg;
+    wire [31:0] match_count_dbg;
+    wire [31:0] last_rx_seq_dbg;
+    wire [31:0] last_rx_addr_dbg;
+    wire [31:0] last_rx_data_dbg;
 
     pcie_cmd_to_optical_gtx_top u_core (
         .SYSCLK_I            (SYSCLK_I),
@@ -115,8 +134,55 @@ module pcie_cmd_to_optical_board_top (
         .phy_tx_resetdone(phy_tx_resetdone),
         .phy_rx_resetdone(phy_rx_resetdone),
         .phy_channel_up  (phy_channel_up),
-        .phy_debug_status(phy_debug_status)
+        .phy_debug_status(phy_debug_status),
+        .rx_data         (phy_rx_data),
+        .rx_data_valid   (phy_rx_data_valid)
     );
+
+    generate
+        if (ENABLE_LOOPBACK_DEBUG) begin : gen_loopback_debug
+            loopback_debug_block u_loopback_debug_block (
+                .rx_clk            (rx_usrclk2_out),
+                .rst               (rst),
+                .phy_rx_data       (phy_rx_data),
+                .phy_rx_data_valid (phy_rx_data_valid),
+                .rx_frame_count    (rx_frame_count_dbg),
+                .crc_error_count   (crc_error_count_dbg),
+                .format_error_count(format_error_count_dbg),
+                .match_count       (match_count_dbg),
+                .last_rx_seq       (last_rx_seq_dbg),
+                .last_rx_addr      (last_rx_addr_dbg),
+                .last_rx_data      (last_rx_data_dbg)
+            );
+        end
+    endgenerate
+
+    assign rx_frame_count    = ENABLE_LOOPBACK_DEBUG ? rx_frame_count_dbg    : 32'd0;
+    assign crc_error_count   = ENABLE_LOOPBACK_DEBUG ? crc_error_count_dbg   : 32'd0;
+    assign format_error_count= ENABLE_LOOPBACK_DEBUG ? format_error_count_dbg: 32'd0;
+    assign match_count       = ENABLE_LOOPBACK_DEBUG ? match_count_dbg       : 32'd0;
+    assign last_rx_seq       = ENABLE_LOOPBACK_DEBUG ? last_rx_seq_dbg       : 32'd0;
+    assign last_rx_addr      = ENABLE_LOOPBACK_DEBUG ? last_rx_addr_dbg      : 32'd0;
+    assign last_rx_data      = ENABLE_LOOPBACK_DEBUG ? last_rx_data_dbg      : 32'd0;
+
+    assign board_test_status = {
+        ENABLE_LOOPBACK_DEBUG,
+        tx_fifo_full,
+        tx_fifo_empty,
+        optical_tx_ready_dbg,
+        optical_tx_valid_dbg,
+        gtx_tx_valid,
+        phy_channel_up,
+        phy_tx_resetdone,
+        phy_rx_resetdone,
+        ~SFP_LOS,
+        ~SFP_TXFAULT,
+        (ENABLE_LOOPBACK_DEBUG ? (|match_count_dbg)        : 1'b0),
+        (ENABLE_LOOPBACK_DEBUG ? (|crc_error_count_dbg)    : 1'b0),
+        (ENABLE_LOOPBACK_DEBUG ? (|format_error_count_dbg) : 1'b0),
+        2'b00,
+        status_reg[15:0]
+    };
 
     // Keep optical transmitter enabled for bring-up.
     assign SFP_TXDISABLE = 1'b0;

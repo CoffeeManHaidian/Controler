@@ -1,4 +1,6 @@
-module pcie_cmd_to_optical_hw_bringup_top (
+module pcie_cmd_to_optical_hw_bringup_top #(
+    parameter ENABLE_LOOPBACK_DEBUG = 1'b1
+) (
     input  wire SYSCLK_I,
     input  wire GTREFCLK1_P,
     input  wire GTREFCLK1_N,
@@ -26,11 +28,19 @@ module pcie_cmd_to_optical_hw_bringup_top (
     reg [31:0] pcie_wr_data = 32'd0;
     reg [31:0] data_counter = 32'd1;
 
-    wire [31:0] status_reg_unused;
-    wire [31:0] tx_frame_count_unused;
-    wire [31:0] optical_status_unused;
-    wire [31:0] gtx_tx_word_count_unused;
-    wire [31:0] phy_debug_status_unused;
+    (* mark_debug = "true" *) wire [31:0] status_reg_dbg;
+    (* mark_debug = "true" *) wire [31:0] tx_frame_count_dbg;
+    (* mark_debug = "true" *) wire [31:0] optical_status_dbg;
+    (* mark_debug = "true" *) wire [31:0] gtx_tx_word_count_dbg;
+    (* mark_debug = "true" *) wire [31:0] phy_debug_status_dbg;
+    (* mark_debug = "true" *) wire [31:0] rx_frame_count_dbg;
+    (* mark_debug = "true" *) wire [31:0] crc_error_count_dbg;
+    (* mark_debug = "true" *) wire [31:0] format_error_count_dbg;
+    (* mark_debug = "true" *) wire [31:0] match_count_dbg;
+    (* mark_debug = "true" *) wire [31:0] last_rx_seq_dbg;
+    (* mark_debug = "true" *) wire [31:0] last_rx_addr_dbg;
+    (* mark_debug = "true" *) wire [31:0] last_rx_data_dbg;
+    (* mark_debug = "true" *) wire [31:0] board_test_status_dbg;
 
     always @(posedge SYSCLK_I) begin
         if (reset_cnt != 32'd5000) begin
@@ -87,7 +97,9 @@ module pcie_cmd_to_optical_hw_bringup_top (
         end
     end
 
-    pcie_cmd_to_optical_board_top u_board_top (
+    pcie_cmd_to_optical_board_top #(
+        .ENABLE_LOOPBACK_DEBUG(ENABLE_LOOPBACK_DEBUG)
+    ) u_board_top (
         .SYSCLK_I          (SYSCLK_I),
         .GTREFCLK1_P       (GTREFCLK1_P),
         .GTREFCLK1_N       (GTREFCLK1_N),
@@ -102,11 +114,19 @@ module pcie_cmd_to_optical_hw_bringup_top (
         .pcie_wr_en        (pcie_wr_en),
         .pcie_wr_addr      (pcie_wr_addr),
         .pcie_wr_data      (pcie_wr_data),
-        .status_reg        (status_reg_unused),
-        .tx_frame_count    (tx_frame_count_unused),
-        .optical_status    (optical_status_unused),
-        .gtx_tx_word_count (gtx_tx_word_count_unused),
-        .phy_debug_status  (phy_debug_status_unused)
+        .status_reg        (status_reg_dbg),
+        .tx_frame_count    (tx_frame_count_dbg),
+        .optical_status    (optical_status_dbg),
+        .gtx_tx_word_count (gtx_tx_word_count_dbg),
+        .phy_debug_status  (phy_debug_status_dbg),
+        .rx_frame_count    (rx_frame_count_dbg),
+        .crc_error_count   (crc_error_count_dbg),
+        .format_error_count(format_error_count_dbg),
+        .match_count       (match_count_dbg),
+        .last_rx_seq       (last_rx_seq_dbg),
+        .last_rx_addr      (last_rx_addr_dbg),
+        .last_rx_data      (last_rx_data_dbg),
+        .board_test_status (board_test_status_dbg)
     );
 
 endmodule

@@ -22,7 +22,9 @@ module custom_gtx_phy_gtwizard0 (
     output wire        phy_tx_resetdone,
     output wire        phy_rx_resetdone,
     output wire        phy_channel_up,
-    output wire [31:0] phy_debug_status
+    output wire [31:0] phy_debug_status,
+    output wire [31:0] rx_data,
+    output wire        rx_data_valid
 );
 
     wire        gt0_tx_fsm_reset_done_out;
@@ -107,6 +109,8 @@ module custom_gtx_phy_gtwizard0 (
     assign tx_usrclk2_out   = gt0_txusrclk2_out;
     assign rx_usrclk_out    = gt0_rxusrclk_out;
     assign rx_usrclk2_out   = gt0_rxusrclk2_out;
+    assign rx_data          = gt0_rxdata_out;
+    assign rx_data_valid    = gt0_rxresetdone_out & gt0_rx_fsm_reset_done_out;
 
     assign phy_debug_status = {
         gt0_cpllfbclklost_out,

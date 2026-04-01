@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<Runs Version="1" Minor="0">
+	<Run Id="loopback_debug_bd_min_optical_loopback_debug_top_0_0_synth_1" LaunchDir="D:/Controler/Controler/Controler.runs/loopback_debug_bd_min_optical_loopback_debug_top_0_0_synth_1" FlowId="Vivado_Synthesis" FromStepId="vivado" ToStepId="vivado"/>
+	<Run Id="loopback_debug_bd_ila_0_0_synth_1" LaunchDir="D:/Controler/Controler/Controler.runs/loopback_debug_bd_ila_0_0_synth_1" FlowId="Vivado_Synthesis" FromStepId="vivado" ToStepId="vivado"/>
+</Runs>
+

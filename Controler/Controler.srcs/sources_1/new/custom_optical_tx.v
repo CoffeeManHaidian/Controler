@@ -21,12 +21,13 @@ module custom_optical_tx (
     localparam [15:0] SOF = 16'h55AA;
     localparam [15:0] EOF = 16'hAA55;
 
-    localparam ST_IDLE  = 2'd0;
-    localparam ST_LATCH = 2'd1;
-    localparam ST_SEND0 = 2'd2;
-    localparam ST_SEND1 = 2'd3;
+    localparam ST_IDLE  = 3'd0;
+    localparam ST_LATCH = 3'd1;
+    localparam ST_SEND0 = 3'd2;
+    localparam ST_SEND1 = 3'd3;
+    localparam ST_SEND2 = 3'd4;
 
-    reg [1:0]  state;
+    reg [2:0]  state;
     reg [31:0] seq_cnt;
     reg [31:0] cmd_addr;
     reg [31:0] cmd_data;
@@ -79,8 +80,8 @@ module custom_optical_tx (
 
                 ST_SEND0: begin
                     if (!tx_valid || tx_ready) begin
-                        // Beat0: SOF + SEQ + ADDR
-                        tx_data  <= {cmd_addr[15:0], cmd_addr[31:16], seq_cnt[15:0], seq_cnt[31:16], SOF};
+                        // Beat0: SOF + reserved + SEQ
+                        tx_data  <= {SOF, 16'h0000, seq_cnt};
                         tx_keep  <= 8'hFF;
                         tx_valid <= 1'b1;
                         tx_last  <= 1'b0;
@@ -90,8 +91,19 @@ module custom_optical_tx (
 
                 ST_SEND1: begin
                     if (!tx_valid || tx_ready) begin
-                        // Beat1: DATA + CRC + EOF
-                        tx_data  <= {16'h0000, EOF, crc16, cmd_data[15:0], cmd_data[31:16]};
+                        // Beat1: ADDR + DATA
+                        tx_data  <= {cmd_addr, cmd_data};
+                        tx_keep  <= 8'hFF;
+                        tx_valid <= 1'b1;
+                        tx_last  <= 1'b0;
+                        state    <= ST_SEND2;
+                    end
+                end
+
+                ST_SEND2: begin
+                    if (!tx_valid || tx_ready) begin
+                        // Beat2: CRC + EOF + reserved
+                        tx_data  <= {crc16, EOF, 32'h0000_0000};
                         tx_keep  <= 8'hFF;
                         tx_valid <= 1'b1;
                         tx_last  <= 1'b1;

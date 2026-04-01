@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<GenRun Id="impl_1" LaunchPart="xc7k325tffg900-2" LaunchTime="1774948840">
-  <File Type="PWROPT-DCP" Name="pcie_cmd_to_optical_hw_bringup_top_pwropt.dcp"/>
+<GenRun Id="impl_1" LaunchPart="xc7k325tffg900-2" LaunchTime="1775010411">
+  <File Type="OPT-HWDEF" Name="pcie_cmd_to_optical_hw_bringup_top.hwdef"/>
+  <File Type="PA-DCP" Name="pcie_cmd_to_optical_hw_bringup_top.dcp"/>
+  <File Type="OPT-DCP" Name="pcie_cmd_to_optical_hw_bringup_top_opt.dcp"/>
   <File Type="ROUTE-PWR" Name="pcie_cmd_to_optical_hw_bringup_top_power_routed.rpt"/>
   <File Type="PA-TCL" Name="pcie_cmd_to_optical_hw_bringup_top.tcl"/>
   <File Type="ROUTE-PWR-SUM" Name="pcie_cmd_to_optical_hw_bringup_top_power_summary_routed.pb"/>
@@ -8,10 +10,9 @@
   <File Type="BG-DRC" Name="pcie_cmd_to_optical_hw_bringup_top.drc"/>
   <File Type="OPT-METHODOLOGY-DRC" Name="pcie_cmd_to_optical_hw_bringup_top_methodology_drc_opted.rpt"/>
   <File Type="INIT-TIMING" Name="pcie_cmd_to_optical_hw_bringup_top_timing_summary_init.rpt"/>
-  <File Type="OPT-HWDEF" Name="pcie_cmd_to_optical_hw_bringup_top.hwdef"/>
-  <File Type="OPT-DCP" Name="pcie_cmd_to_optical_hw_bringup_top_opt.dcp"/>
   <File Type="OPT-DRC" Name="pcie_cmd_to_optical_hw_bringup_top_drc_opted.rpt"/>
   <File Type="OPT-TIMING" Name="pcie_cmd_to_optical_hw_bringup_top_timing_summary_opted.rpt"/>
+  <File Type="PWROPT-DCP" Name="pcie_cmd_to_optical_hw_bringup_top_pwropt.dcp"/>
   <File Type="PWROPT-DRC" Name="pcie_cmd_to_optical_hw_bringup_top_drc_pwropted.rpt"/>
   <File Type="PWROPT-TIMING" Name="pcie_cmd_to_optical_hw_bringup_top_timing_summary_pwropted.rpt"/>
   <File Type="PLACE-DCP" Name="pcie_cmd_to_optical_hw_bringup_top_placed.dcp"/>
@@ -86,6 +87,34 @@
         <Attr Name="UsedIn" Val="simulation"/>
       </FileInfo>
     </File>
+    <File Path="$PSRCDIR/sources_1/new/gtx_rx32_to_stream64.v">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/loopback_checker.v">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/loopback_debug_block.v">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/optical_cmd_rx.v">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
     <File Path="$PSRCDIR/sources_1/new/optical_stream_to_gtx32.v">
       <FileInfo>
         <Attr Name="UsedIn" Val="synthesis"/>
@@ -130,6 +159,30 @@
     </File>
     <File Path="$PSRCDIR/sources_1/new/pcie_cmd_to_optical_hw_bringup_top.v">
       <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/min_optical_loopback_debug_top.v">
+      <FileInfo>
+        <Attr Name="AutoDisabled" Val="1"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/bd/loopback_debug_bd/loopback_debug_bd.bd">
+      <FileInfo>
+        <Attr Name="AutoDisabled" Val="1"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/bd/loopback_debug_bd/hdl/loopback_debug_bd_wrapper.v">
+      <FileInfo>
+        <Attr Name="AutoDisabled" Val="1"/>
         <Attr Name="UsedIn" Val="synthesis"/>
         <Attr Name="UsedIn" Val="implementation"/>
         <Attr Name="UsedIn" Val="simulation"/>
@@ -212,4 +265,6 @@
     <Step Id="write_bitstream"/>
   </Strategy>
   <BlockFileSet Type="BlockSrcs" Name="gtwizard_0"/>
+  <BlockFileSet Type="BlockSrcs" Name="loopback_debug_bd_min_optical_loopback_debug_top_0_0"/>
+  <BlockFileSet Type="BlockSrcs" Name="loopback_debug_bd_ila_0_0"/>
 </GenRun>

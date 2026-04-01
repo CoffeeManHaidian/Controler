@@ -17,7 +17,9 @@ module custom_gtx_phy_stub (
     output wire        phy_tx_resetdone,
     output wire        phy_rx_resetdone,
     output wire        phy_channel_up,
-    output wire [31:0] phy_debug_status
+    output wire [31:0] phy_debug_status,
+    output wire [31:0] rx_data,
+    output wire        rx_data_valid
 );
 
     reg [31:0] tx_word_seen_cnt;
@@ -38,6 +40,8 @@ module custom_gtx_phy_stub (
     assign phy_tx_resetdone = ~rst;
     assign phy_rx_resetdone = ~rst;
     assign phy_channel_up   = ~rst;
+    assign rx_data          = last_word_data;
+    assign rx_data_valid    = tx_valid;
     assign phy_debug_status = {
         4'd0,
         tx_word_index,

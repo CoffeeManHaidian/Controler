@@ -1,0 +1,553 @@
+#-----------------------------------------------------------
+# Vivado v2017.4 (64-bit)
+# SW Build 2086221 on Fri Dec 15 20:55:39 MST 2017
+# IP Build 2085800 on Fri Dec 15 22:25:07 MST 2017
+# Start of session at: Wed Apr  1 10:04:30 2026
+# Process ID: 15000
+# Current directory: D:/Controler/Controler/Controler.runs/loopback_debug_bd_min_optical_loopback_debug_top_0_0_synth_1
+# Command line: vivado.exe -log loopback_debug_bd_min_optical_loopback_debug_top_0_0.vds -product Vivado -mode batch -messageDb vivado.pb -notrace -source loopback_debug_bd_min_optical_loopback_debug_top_0_0.tcl
+# Log file: D:/Controler/Controler/Controler.runs/loopback_debug_bd_min_optical_loopback_debug_top_0_0_synth_1/loopback_debug_bd_min_optical_loopback_debug_top_0_0.vds
+# Journal file: D:/Controler/Controler/Controler.runs/loopback_debug_bd_min_optical_loopback_debug_top_0_0_synth_1\vivado.jou
+#-----------------------------------------------------------
+source loopback_debug_bd_min_optical_loopback_debug_top_0_0.tcl -notrace
+Command: synth_design -top loopback_debug_bd_min_optical_loopback_debug_top_0_0 -part xc7k325tffg900-2 -mode out_of_context
+Starting synth_design
+Attempting to get a license for feature 'Synthesis' and/or device 'xc7k325t'
+INFO: [Common 17-349] Got license for feature 'Synthesis' and/or device 'xc7k325t'
+INFO: Launching helper process for spawning children vivado processes
+INFO: Helper process launched with PID 20836 
+---------------------------------------------------------------------------------
+Starting Synthesize : Time (s): cpu = 00:00:02 ; elapsed = 00:00:03 . Memory (MB): peak = 404.738 ; gain = 101.977
+---------------------------------------------------------------------------------
+INFO: [Synth 8-638] synthesizing module 'loopback_debug_bd_min_optical_loopback_debug_top_0_0' [d:/Controler/Controler/Controler.srcs/sources_1/bd/loopback_debug_bd/ip/loopback_debug_bd_min_optical_loopback_debug_top_0_0/synth/loopback_debug_bd_min_optical_loopback_debug_top_0_0.v:57]
+INFO: [Synth 8-638] synthesizing module 'min_optical_loopback_debug_top' [D:/Controler/Controler/Controler.srcs/sources_1/new/min_optical_loopback_debug_top.v:1]
+INFO: [Synth 8-638] synthesizing module 'pcie_cmd_to_optical_gtx_top' [D:/Controler/Controler/Controler.srcs/sources_1/new/pcie_cmd_to_optical_gtx_top.v:1]
+INFO: [Synth 8-638] synthesizing module 'pcie_cmd_to_optical_top' [D:/Controler/Controler/Controler.srcs/sources_1/new/pcie_cmd_to_optical_top.v:1]
+INFO: [Synth 8-638] synthesizing module 'pcie_bar_cmd_rx' [D:/Controler/Controler/Controler.srcs/sources_1/new/pcie_bar_cmd_rx.v:1]
+	Parameter ADDR_CMD_ADDR bound to: 0 - type: integer 
+	Parameter ADDR_CMD_DATA bound to: 4 - type: integer 
+	Parameter ADDR_CMD_COMMIT bound to: 8 - type: integer 
+INFO: [Synth 8-256] done synthesizing module 'pcie_bar_cmd_rx' (1#1) [D:/Controler/Controler/Controler.srcs/sources_1/new/pcie_bar_cmd_rx.v:1]
+INFO: [Synth 8-638] synthesizing module 'simple_sync_fifo' [D:/Controler/Controler/Controler.srcs/sources_1/new/simple_sync_fifo.v:1]
+	Parameter DATA_WIDTH bound to: 64 - type: integer 
+	Parameter DEPTH bound to: 16 - type: integer 
+	Parameter ADDR_WIDTH bound to: 4 - type: integer 
+INFO: [Synth 8-256] done synthesizing module 'simple_sync_fifo' (2#1) [D:/Controler/Controler/Controler.srcs/sources_1/new/simple_sync_fifo.v:1]
+INFO: [Synth 8-638] synthesizing module 'custom_optical_tx' [D:/Controler/Controler/Controler.srcs/sources_1/new/custom_optical_tx.v:1]
+	Parameter SOF bound to: 16'b0101010110101010 
+	Parameter EOF bound to: 16'b1010101001010101 
+	Parameter ST_IDLE bound to: 3'b000 
+	Parameter ST_LATCH bound to: 3'b001 
+	Parameter ST_SEND0 bound to: 3'b010 
+	Parameter ST_SEND1 bound to: 3'b011 
+	Parameter ST_SEND2 bound to: 3'b100 
+INFO: [Synth 8-256] done synthesizing module 'custom_optical_tx' (3#1) [D:/Controler/Controler/Controler.srcs/sources_1/new/custom_optical_tx.v:1]
+INFO: [Synth 8-256] done synthesizing module 'pcie_cmd_to_optical_top' (4#1) [D:/Controler/Controler/Controler.srcs/sources_1/new/pcie_cmd_to_optical_top.v:1]
+INFO: [Synth 8-638] synthesizing module 'optical_stream_to_gtx32' [D:/Controler/Controler/Controler.srcs/sources_1/new/optical_stream_to_gtx32.v:1]
+	Parameter ST_IDLE bound to: 3'b000 
+	Parameter ST_W0 bound to: 3'b001 
+	Parameter ST_W1 bound to: 3'b010 
+INFO: [Synth 8-256] done synthesizing module 'optical_stream_to_gtx32' (5#1) [D:/Controler/Controler/Controler.srcs/sources_1/new/optical_stream_to_gtx32.v:1]
+INFO: [Synth 8-256] done synthesizing module 'pcie_cmd_to_optical_gtx_top' (6#1) [D:/Controler/Controler/Controler.srcs/sources_1/new/pcie_cmd_to_optical_gtx_top.v:1]
+INFO: [Synth 8-638] synthesizing module 'loopback_debug_block' [D:/Controler/Controler/Controler.srcs/sources_1/new/loopback_debug_block.v:1]
+INFO: [Synth 8-638] synthesizing module 'gtx_rx32_to_stream64' [D:/Controler/Controler/Controler.srcs/sources_1/new/gtx_rx32_to_stream64.v:1]
+	Parameter SOF bound to: 16'b0101010110101010 
+	Parameter EOF bound to: 16'b1010101001010101 
+	Parameter ST_SEARCH bound to: 3'b000 
+	Parameter ST_B1_LO bound to: 3'b001 
+	Parameter ST_B1_HI bound to: 3'b010 
+	Parameter ST_B2_LO bound to: 3'b011 
+	Parameter ST_B2_HI bound to: 3'b100 
+INFO: [Synth 8-256] done synthesizing module 'gtx_rx32_to_stream64' (7#1) [D:/Controler/Controler/Controler.srcs/sources_1/new/gtx_rx32_to_stream64.v:1]
+INFO: [Synth 8-638] synthesizing module 'optical_cmd_rx' [D:/Controler/Controler/Controler.srcs/sources_1/new/optical_cmd_rx.v:1]
+	Parameter SOF bound to: 16'b0101010110101010 
+	Parameter EOF bound to: 16'b1010101001010101 
+	Parameter ST_IDLE bound to: 2'b00 
+	Parameter ST_B1 bound to: 2'b01 
+	Parameter ST_B2 bound to: 2'b10 
+INFO: [Synth 8-256] done synthesizing module 'optical_cmd_rx' (8#1) [D:/Controler/Controler/Controler.srcs/sources_1/new/optical_cmd_rx.v:1]
+INFO: [Synth 8-638] synthesizing module 'loopback_checker' [D:/Controler/Controler/Controler.srcs/sources_1/new/loopback_checker.v:1]
+INFO: [Synth 8-256] done synthesizing module 'loopback_checker' (9#1) [D:/Controler/Controler/Controler.srcs/sources_1/new/loopback_checker.v:1]
+INFO: [Synth 8-256] done synthesizing module 'loopback_debug_block' (10#1) [D:/Controler/Controler/Controler.srcs/sources_1/new/loopback_debug_block.v:1]
+INFO: [Synth 8-256] done synthesizing module 'min_optical_loopback_debug_top' (11#1) [D:/Controler/Controler/Controler.srcs/sources_1/new/min_optical_loopback_debug_top.v:1]
+INFO: [Synth 8-256] done synthesizing module 'loopback_debug_bd_min_optical_loopback_debug_top_0_0' (12#1) [d:/Controler/Controler/Controler.srcs/sources_1/bd/loopback_debug_bd/ip/loopback_debug_bd_min_optical_loopback_debug_top_0_0/synth/loopback_debug_bd_min_optical_loopback_debug_top_0_0.v:57]
+WARNING: [Synth 8-3331] design optical_stream_to_gtx32 has unconnected port s_axis_tkeep[7]
+WARNING: [Synth 8-3331] design optical_stream_to_gtx32 has unconnected port s_axis_tkeep[6]
+WARNING: [Synth 8-3331] design optical_stream_to_gtx32 has unconnected port s_axis_tkeep[5]
+WARNING: [Synth 8-3331] design optical_stream_to_gtx32 has unconnected port s_axis_tkeep[4]
+WARNING: [Synth 8-3331] design optical_stream_to_gtx32 has unconnected port s_axis_tkeep[3]
+WARNING: [Synth 8-3331] design optical_stream_to_gtx32 has unconnected port s_axis_tkeep[2]
+WARNING: [Synth 8-3331] design optical_stream_to_gtx32 has unconnected port s_axis_tkeep[1]
+WARNING: [Synth 8-3331] design optical_stream_to_gtx32 has unconnected port s_axis_tkeep[0]
+---------------------------------------------------------------------------------
+Finished Synthesize : Time (s): cpu = 00:00:03 ; elapsed = 00:00:03 . Memory (MB): peak = 456.027 ; gain = 153.266
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Constraint Validation : Time (s): cpu = 00:00:03 ; elapsed = 00:00:03 . Memory (MB): peak = 456.027 ; gain = 153.266
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Loading Part and Timing Information
+---------------------------------------------------------------------------------
+Loading part: xc7k325tffg900-2
+---------------------------------------------------------------------------------
+Finished Loading Part and Timing Information : Time (s): cpu = 00:00:03 ; elapsed = 00:00:03 . Memory (MB): peak = 456.027 ; gain = 153.266
+---------------------------------------------------------------------------------
+INFO: [Device 21-403] Loading part xc7k325tffg900-2
+WARNING: [Synth 8-6014] Unused sequential element commit_count_reg was removed.  [D:/Controler/Controler/Controler.srcs/sources_1/new/pcie_bar_cmd_rx.v:23]
+INFO: [Synth 8-5818] HDL ADVISOR - The operator resource <adder> is shared. To prevent sharing consider applying a KEEP on the output of the operator [D:/Controler/Controler/Controler.srcs/sources_1/new/simple_sync_fifo.v:47]
+WARNING: [Synth 8-6014] Unused sequential element wr_ptr_reg was removed.  [D:/Controler/Controler/Controler.srcs/sources_1/new/simple_sync_fifo.v:32]
+WARNING: [Synth 8-6014] Unused sequential element rd_ptr_reg was removed.  [D:/Controler/Controler/Controler.srcs/sources_1/new/simple_sync_fifo.v:33]
+WARNING: [Synth 8-6014] Unused sequential element usedw_reg was removed.  [D:/Controler/Controler/Controler.srcs/sources_1/new/simple_sync_fifo.v:24]
+INFO: [Synth 8-802] inferred FSM for state register 'state_reg' in module 'custom_optical_tx'
+INFO: [Synth 8-5544] ROM "cmd_addr" won't be mapped to Block RAM because address size (3) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "state" won't be mapped to Block RAM because address size (3) smaller than threshold (5)
+WARNING: [Synth 8-6014] Unused sequential element seq_cnt_reg was removed.  [D:/Controler/Controler/Controler.srcs/sources_1/new/custom_optical_tx.v:49]
+WARNING: [Synth 8-6014] Unused sequential element tx_frame_count_reg was removed.  [D:/Controler/Controler/Controler.srcs/sources_1/new/custom_optical_tx.v:58]
+WARNING: [Synth 8-6014] Unused sequential element tx_frame_count_reg was removed.  [D:/Controler/Controler/Controler.srcs/sources_1/new/custom_optical_tx.v:58]
+INFO: [Synth 8-5544] ROM "state" won't be mapped to Block RAM because address size (3) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "gtx_tx_data" won't be mapped to Block RAM because address size (3) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "gtx_tx_word_index" won't be mapped to Block RAM because address size (3) smaller than threshold (5)
+WARNING: [Synth 8-6014] Unused sequential element gtx_tx_word_count_reg was removed.  [D:/Controler/Controler/Controler.srcs/sources_1/new/optical_stream_to_gtx32.v:37]
+INFO: [Synth 8-802] inferred FSM for state register 'state_reg' in module 'gtx_rx32_to_stream64'
+INFO: [Synth 8-5544] ROM "prev_valid" won't be mapped to Block RAM because address size (3) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "beat_lo_word" won't be mapped to Block RAM because address size (3) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "state" won't be mapped to Block RAM because address size (3) smaller than threshold (5)
+WARNING: [Synth 8-6014] Unused sequential element rx_frame_count_reg was removed.  [D:/Controler/Controler/Controler.srcs/sources_1/new/optical_cmd_rx.v:54]
+WARNING: [Synth 8-6014] Unused sequential element crc_error_count_reg was removed.  [D:/Controler/Controler/Controler.srcs/sources_1/new/optical_cmd_rx.v:55]
+WARNING: [Synth 8-6014] Unused sequential element format_error_count_reg was removed.  [D:/Controler/Controler/Controler.srcs/sources_1/new/optical_cmd_rx.v:56]
+WARNING: [Synth 8-6014] Unused sequential element match_count_reg was removed.  [D:/Controler/Controler/Controler.srcs/sources_1/new/loopback_checker.v:22]
+WARNING: [Synth 8-6014] Unused sequential element crc_error_count_reg was removed.  [D:/Controler/Controler/Controler.srcs/sources_1/new/loopback_checker.v:23]
+WARNING: [Synth 8-6014] Unused sequential element format_error_count_reg was removed.  [D:/Controler/Controler/Controler.srcs/sources_1/new/loopback_checker.v:24]
+---------------------------------------------------------------------------------------------------
+                   State |                     New Encoding |                Previous Encoding 
+---------------------------------------------------------------------------------------------------
+                 ST_IDLE |                              000 |                              000
+                ST_LATCH |                              001 |                              001
+                ST_SEND0 |                              010 |                              010
+                ST_SEND1 |                              011 |                              011
+                ST_SEND2 |                              100 |                              100
+---------------------------------------------------------------------------------------------------
+INFO: [Synth 8-3354] encoded FSM with state register 'state_reg' using encoding 'sequential' in module 'custom_optical_tx'
+---------------------------------------------------------------------------------------------------
+                   State |                     New Encoding |                Previous Encoding 
+---------------------------------------------------------------------------------------------------
+               ST_SEARCH |                              000 |                              000
+                ST_B1_LO |                              001 |                              001
+                ST_B1_HI |                              010 |                              010
+                ST_B2_LO |                              011 |                              011
+                ST_B2_HI |                              100 |                              100
+---------------------------------------------------------------------------------------------------
+INFO: [Synth 8-3354] encoded FSM with state register 'state_reg' using encoding 'sequential' in module 'gtx_rx32_to_stream64'
+---------------------------------------------------------------------------------
+Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:03 ; elapsed = 00:00:03 . Memory (MB): peak = 456.027 ; gain = 153.266
+---------------------------------------------------------------------------------
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+No constraint files found.
+---------------------------------------------------------------------------------
+Start RTL Component Statistics 
+---------------------------------------------------------------------------------
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input      5 Bit       Adders := 1     
+	   2 Input      4 Bit       Adders := 3     
++---XORs : 
+	   6 Input     16 Bit         XORs := 2     
++---Registers : 
+	               64 Bit    Registers := 5     
+	               32 Bit    Registers := 16    
+	               16 Bit    Registers := 1     
+	                8 Bit    Registers := 2     
+	                5 Bit    Registers := 1     
+	                4 Bit    Registers := 2     
+	                3 Bit    Registers := 1     
+	                2 Bit    Registers := 2     
+	                1 Bit    Registers := 13    
++---RAMs : 
+	             1024 Bit         RAMs := 1     
++---Muxes : 
+	   5 Input     64 Bit        Muxes := 2     
+	   2 Input     32 Bit        Muxes := 1     
+	   4 Input     32 Bit        Muxes := 1     
+	   5 Input      8 Bit        Muxes := 2     
+	   5 Input      3 Bit        Muxes := 2     
+	   3 Input      2 Bit        Muxes := 1     
+	   2 Input      2 Bit        Muxes := 1     
+	   4 Input      2 Bit        Muxes := 1     
+	   5 Input      2 Bit        Muxes := 1     
+	   3 Input      1 Bit        Muxes := 1     
+	   5 Input      1 Bit        Muxes := 18    
+	   2 Input      1 Bit        Muxes := 9     
+	   4 Input      1 Bit        Muxes := 17    
+---------------------------------------------------------------------------------
+Finished RTL Component Statistics 
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start RTL Hierarchical Component Statistics 
+---------------------------------------------------------------------------------
+Hierarchical RTL Component report 
+Module pcie_bar_cmd_rx 
+Detailed RTL Component Info : 
++---Registers : 
+	               64 Bit    Registers := 1     
+	               32 Bit    Registers := 2     
+	                1 Bit    Registers := 1     
+Module simple_sync_fifo 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input      5 Bit       Adders := 1     
+	   2 Input      4 Bit       Adders := 3     
++---Registers : 
+	               64 Bit    Registers := 1     
+	                5 Bit    Registers := 1     
+	                4 Bit    Registers := 2     
++---RAMs : 
+	             1024 Bit         RAMs := 1     
++---Muxes : 
+	   3 Input      2 Bit        Muxes := 1     
+	   3 Input      1 Bit        Muxes := 1     
+Module custom_optical_tx 
+Detailed RTL Component Info : 
++---XORs : 
+	   6 Input     16 Bit         XORs := 1     
++---Registers : 
+	               64 Bit    Registers := 1     
+	               32 Bit    Registers := 2     
+	               16 Bit    Registers := 1     
+	                8 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   5 Input     64 Bit        Muxes := 1     
+	   5 Input      8 Bit        Muxes := 1     
+	   5 Input      3 Bit        Muxes := 1     
+	   5 Input      1 Bit        Muxes := 9     
+Module optical_stream_to_gtx32 
+Detailed RTL Component Info : 
++---Registers : 
+	               64 Bit    Registers := 1     
+	               32 Bit    Registers := 1     
+	                3 Bit    Registers := 1     
+	                2 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input     32 Bit        Muxes := 1     
+	   4 Input     32 Bit        Muxes := 1     
+	   2 Input      2 Bit        Muxes := 1     
+	   4 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 6     
+	   4 Input      1 Bit        Muxes := 6     
+Module gtx_rx32_to_stream64 
+Detailed RTL Component Info : 
++---Registers : 
+	               64 Bit    Registers := 1     
+	               32 Bit    Registers := 2     
+	                8 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   5 Input     64 Bit        Muxes := 1     
+	   5 Input      8 Bit        Muxes := 1     
+	   5 Input      3 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 2     
+	   5 Input      1 Bit        Muxes := 9     
+Module optical_cmd_rx 
+Detailed RTL Component Info : 
++---XORs : 
+	   6 Input     16 Bit         XORs := 1     
++---Registers : 
+	               32 Bit    Registers := 6     
+	                2 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   5 Input      2 Bit        Muxes := 1     
+	   4 Input      1 Bit        Muxes := 11    
+	   2 Input      1 Bit        Muxes := 1     
+Module loopback_checker 
+Detailed RTL Component Info : 
++---Registers : 
+	               32 Bit    Registers := 3     
+---------------------------------------------------------------------------------
+Finished RTL Hierarchical Component Statistics
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Part Resource Summary
+---------------------------------------------------------------------------------
+Part Resources:
+DSPs: 840 (col length:140)
+BRAMs: 890 (col length: RAMB18 140 RAMB36 70)
+---------------------------------------------------------------------------------
+Finished Part Resource Summary
+---------------------------------------------------------------------------------
+No constraint files found.
+---------------------------------------------------------------------------------
+Start Cross Boundary and Area Optimization
+---------------------------------------------------------------------------------
+WARNING: [Synth 8-6014] Unused sequential element inst/u_loopback_debug_block/u_optical_cmd_rx/crc_error_count_reg was removed.  [D:/Controler/Controler/Controler.srcs/sources_1/new/optical_cmd_rx.v:55]
+WARNING: [Synth 8-6014] Unused sequential element inst/u_loopback_debug_block/u_optical_cmd_rx/format_error_count_reg was removed.  [D:/Controler/Controler/Controler.srcs/sources_1/new/optical_cmd_rx.v:56]
+WARNING: [Synth 8-6014] Unused sequential element inst/u_pcie_cmd_to_optical_gtx_top/u_pcie_cmd_to_optical_top/u_pcie_bar_cmd_rx/commit_count_reg was removed.  [D:/Controler/Controler/Controler.srcs/sources_1/new/pcie_bar_cmd_rx.v:23]
+WARNING: [Synth 8-6014] Unused sequential element inst/u_pcie_cmd_to_optical_gtx_top/u_pcie_cmd_to_optical_top/u_simple_sync_fifo/usedw_reg was removed.  [D:/Controler/Controler/Controler.srcs/sources_1/new/simple_sync_fifo.v:24]
+WARNING: [Synth 8-6014] Unused sequential element inst/u_pcie_cmd_to_optical_gtx_top/u_pcie_cmd_to_optical_top/u_simple_sync_fifo/wr_ptr_reg was removed.  [D:/Controler/Controler/Controler.srcs/sources_1/new/simple_sync_fifo.v:32]
+WARNING: [Synth 8-6014] Unused sequential element inst/u_pcie_cmd_to_optical_gtx_top/u_pcie_cmd_to_optical_top/u_simple_sync_fifo/rd_ptr_reg was removed.  [D:/Controler/Controler/Controler.srcs/sources_1/new/simple_sync_fifo.v:33]
+WARNING: [Synth 8-6014] Unused sequential element inst/u_pcie_cmd_to_optical_gtx_top/u_pcie_cmd_to_optical_top/u_custom_optical_tx/seq_cnt_reg was removed.  [D:/Controler/Controler/Controler.srcs/sources_1/new/custom_optical_tx.v:49]
+WARNING: [Synth 8-6014] Unused sequential element inst/u_pcie_cmd_to_optical_gtx_top/u_optical_stream_to_gtx32/gtx_tx_word_count_reg was removed.  [D:/Controler/Controler/Controler.srcs/sources_1/new/optical_stream_to_gtx32.v:37]
+WARNING: [Synth 8-6014] Unused sequential element inst/u_loopback_debug_block/u_optical_cmd_rx/rx_frame_count_reg was removed.  [D:/Controler/Controler/Controler.srcs/sources_1/new/optical_cmd_rx.v:54]
+WARNING: [Synth 8-6014] Unused sequential element inst/u_loopback_debug_block/u_loopback_checker/match_count_reg was removed.  [D:/Controler/Controler/Controler.srcs/sources_1/new/loopback_checker.v:22]
+WARNING: [Synth 8-6014] Unused sequential element inst/u_loopback_debug_block/u_loopback_checker/crc_error_count_reg was removed.  [D:/Controler/Controler/Controler.srcs/sources_1/new/loopback_checker.v:23]
+WARNING: [Synth 8-6014] Unused sequential element inst/u_loopback_debug_block/u_loopback_checker/format_error_count_reg was removed.  [D:/Controler/Controler/Controler.srcs/sources_1/new/loopback_checker.v:24]
+INFO: [Synth 8-3917] design loopback_debug_bd_min_optical_loopback_debug_top_0_0 has port status_reg[1] driven by constant 1
+INFO: [Synth 8-3917] design loopback_debug_bd_min_optical_loopback_debug_top_0_0 has port status_reg[0] driven by constant 0
+INFO: [Synth 8-3917] design loopback_debug_bd_min_optical_loopback_debug_top_0_0 has port optical_status[31] driven by constant 0
+INFO: [Synth 8-3917] design loopback_debug_bd_min_optical_loopback_debug_top_0_0 has port optical_status[30] driven by constant 0
+INFO: [Synth 8-3917] design loopback_debug_bd_min_optical_loopback_debug_top_0_0 has port optical_status[29] driven by constant 0
+INFO: [Synth 8-3917] design loopback_debug_bd_min_optical_loopback_debug_top_0_0 has port optical_status[28] driven by constant 0
+INFO: [Synth 8-3917] design loopback_debug_bd_min_optical_loopback_debug_top_0_0 has port optical_status[27] driven by constant 0
+INFO: [Synth 8-3917] design loopback_debug_bd_min_optical_loopback_debug_top_0_0 has port optical_status[26] driven by constant 0
+INFO: [Synth 8-3917] design loopback_debug_bd_min_optical_loopback_debug_top_0_0 has port optical_status[25] driven by constant 0
+INFO: [Synth 8-3917] design loopback_debug_bd_min_optical_loopback_debug_top_0_0 has port optical_status[24] driven by constant 0
+INFO: [Synth 8-3917] design loopback_debug_bd_min_optical_loopback_debug_top_0_0 has port optical_status[23] driven by constant 0
+INFO: [Synth 8-3917] design loopback_debug_bd_min_optical_loopback_debug_top_0_0 has port optical_status[22] driven by constant 0
+INFO: [Synth 8-3917] design loopback_debug_bd_min_optical_loopback_debug_top_0_0 has port optical_status[21] driven by constant 0
+INFO: [Synth 8-3917] design loopback_debug_bd_min_optical_loopback_debug_top_0_0 has port optical_status[20] driven by constant 0
+INFO: [Synth 8-3917] design loopback_debug_bd_min_optical_loopback_debug_top_0_0 has port optical_status[19] driven by constant 0
+INFO: [Synth 8-3917] design loopback_debug_bd_min_optical_loopback_debug_top_0_0 has port optical_status[18] driven by constant 0
+INFO: [Synth 8-3917] design loopback_debug_bd_min_optical_loopback_debug_top_0_0 has port optical_status[17] driven by constant 0
+INFO: [Synth 8-3917] design loopback_debug_bd_min_optical_loopback_debug_top_0_0 has port optical_status[16] driven by constant 0
+INFO: [Synth 8-3917] design loopback_debug_bd_min_optical_loopback_debug_top_0_0 has port optical_status[15] driven by constant 0
+INFO: [Synth 8-3917] design loopback_debug_bd_min_optical_loopback_debug_top_0_0 has port optical_status[14] driven by constant 0
+INFO: [Synth 8-3917] design loopback_debug_bd_min_optical_loopback_debug_top_0_0 has port optical_status[13] driven by constant 0
+INFO: [Synth 8-3917] design loopback_debug_bd_min_optical_loopback_debug_top_0_0 has port optical_status[12] driven by constant 0
+INFO: [Synth 8-3917] design loopback_debug_bd_min_optical_loopback_debug_top_0_0 has port optical_status[11] driven by constant 0
+INFO: [Synth 8-3917] design loopback_debug_bd_min_optical_loopback_debug_top_0_0 has port optical_status[10] driven by constant 0
+INFO: [Synth 8-3917] design loopback_debug_bd_min_optical_loopback_debug_top_0_0 has port optical_status[9] driven by constant 0
+INFO: [Synth 8-3917] design loopback_debug_bd_min_optical_loopback_debug_top_0_0 has port optical_status[8] driven by constant 0
+INFO: [Synth 8-3917] design loopback_debug_bd_min_optical_loopback_debug_top_0_0 has port optical_status[7] driven by constant 0
+INFO: [Synth 8-3917] design loopback_debug_bd_min_optical_loopback_debug_top_0_0 has port optical_status[6] driven by constant 0
+INFO: [Synth 8-3917] design loopback_debug_bd_min_optical_loopback_debug_top_0_0 has port optical_status[5] driven by constant 0
+INFO: [Synth 8-3917] design loopback_debug_bd_min_optical_loopback_debug_top_0_0 has port optical_status[4] driven by constant 1
+INFO: [Synth 8-3917] design loopback_debug_bd_min_optical_loopback_debug_top_0_0 has port optical_status[3] driven by constant 1
+INFO: [Synth 8-3917] design loopback_debug_bd_min_optical_loopback_debug_top_0_0 has port optical_status[2] driven by constant 1
+INFO: [Synth 8-3917] design loopback_debug_bd_min_optical_loopback_debug_top_0_0 has port optical_status[1] driven by constant 0
+INFO: [Synth 8-3917] design loopback_debug_bd_min_optical_loopback_debug_top_0_0 has port optical_status[0] driven by constant 1
+INFO: [Synth 8-3886] merging instance 'inst/u_loopback_debug_block/u_gtx_rx32_to_stream64/m_axis_tkeep_reg[4]' (FDRE) to 'inst/u_loopback_debug_block/u_gtx_rx32_to_stream64/m_axis_tkeep_reg[0]'
+INFO: [Synth 8-3886] merging instance 'inst/u_loopback_debug_block/u_gtx_rx32_to_stream64/m_axis_tkeep_reg[5]' (FDRE) to 'inst/u_loopback_debug_block/u_gtx_rx32_to_stream64/m_axis_tkeep_reg[0]'
+INFO: [Synth 8-3886] merging instance 'inst/u_loopback_debug_block/u_gtx_rx32_to_stream64/m_axis_tkeep_reg[7]' (FDRE) to 'inst/u_loopback_debug_block/u_gtx_rx32_to_stream64/m_axis_tkeep_reg[0]'
+INFO: [Synth 8-3886] merging instance 'inst/u_loopback_debug_block/u_gtx_rx32_to_stream64/m_axis_tkeep_reg[6]' (FDRE) to 'inst/u_loopback_debug_block/u_gtx_rx32_to_stream64/m_axis_tkeep_reg[0]'
+INFO: [Synth 8-3886] merging instance 'inst/u_loopback_debug_block/u_gtx_rx32_to_stream64/m_axis_tkeep_reg[0]' (FDRE) to 'inst/u_loopback_debug_block/u_gtx_rx32_to_stream64/m_axis_tkeep_reg[1]'
+INFO: [Synth 8-3886] merging instance 'inst/u_loopback_debug_block/u_gtx_rx32_to_stream64/m_axis_tkeep_reg[1]' (FDRE) to 'inst/u_loopback_debug_block/u_gtx_rx32_to_stream64/m_axis_tkeep_reg[2]'
+INFO: [Synth 8-3886] merging instance 'inst/u_loopback_debug_block/u_gtx_rx32_to_stream64/m_axis_tkeep_reg[2]' (FDRE) to 'inst/u_loopback_debug_block/u_gtx_rx32_to_stream64/m_axis_tkeep_reg[3]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\inst/u_pcie_cmd_to_optical_gtx_top/u_optical_stream_to_gtx32/state_reg[2] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\inst/u_pcie_cmd_to_optical_gtx_top/u_optical_stream_to_gtx32/gtx_tx_word_index_reg[1] )
+INFO: [Synth 8-3886] merging instance 'inst/u_pcie_cmd_to_optical_gtx_top/u_pcie_cmd_to_optical_top/u_custom_optical_tx/tx_keep_reg[0]' (FDRE) to 'inst/u_pcie_cmd_to_optical_gtx_top/u_pcie_cmd_to_optical_top/u_custom_optical_tx/tx_keep_reg[7]'
+INFO: [Synth 8-3886] merging instance 'inst/u_pcie_cmd_to_optical_gtx_top/u_pcie_cmd_to_optical_top/u_custom_optical_tx/tx_keep_reg[1]' (FDRE) to 'inst/u_pcie_cmd_to_optical_gtx_top/u_pcie_cmd_to_optical_top/u_custom_optical_tx/tx_keep_reg[7]'
+INFO: [Synth 8-3886] merging instance 'inst/u_pcie_cmd_to_optical_gtx_top/u_pcie_cmd_to_optical_top/u_custom_optical_tx/tx_keep_reg[2]' (FDRE) to 'inst/u_pcie_cmd_to_optical_gtx_top/u_pcie_cmd_to_optical_top/u_custom_optical_tx/tx_keep_reg[7]'
+INFO: [Synth 8-3886] merging instance 'inst/u_pcie_cmd_to_optical_gtx_top/u_pcie_cmd_to_optical_top/u_custom_optical_tx/tx_keep_reg[3]' (FDRE) to 'inst/u_pcie_cmd_to_optical_gtx_top/u_pcie_cmd_to_optical_top/u_custom_optical_tx/tx_keep_reg[7]'
+INFO: [Synth 8-3886] merging instance 'inst/u_pcie_cmd_to_optical_gtx_top/u_pcie_cmd_to_optical_top/u_custom_optical_tx/tx_keep_reg[4]' (FDRE) to 'inst/u_pcie_cmd_to_optical_gtx_top/u_pcie_cmd_to_optical_top/u_custom_optical_tx/tx_keep_reg[7]'
+INFO: [Synth 8-3886] merging instance 'inst/u_pcie_cmd_to_optical_gtx_top/u_pcie_cmd_to_optical_top/u_custom_optical_tx/tx_keep_reg[5]' (FDRE) to 'inst/u_pcie_cmd_to_optical_gtx_top/u_pcie_cmd_to_optical_top/u_custom_optical_tx/tx_keep_reg[7]'
+INFO: [Synth 8-3886] merging instance 'inst/u_pcie_cmd_to_optical_gtx_top/u_pcie_cmd_to_optical_top/u_custom_optical_tx/tx_keep_reg[6]' (FDRE) to 'inst/u_pcie_cmd_to_optical_gtx_top/u_pcie_cmd_to_optical_top/u_custom_optical_tx/tx_keep_reg[7]'
+INFO: [Synth 8-3332] Sequential element (inst/u_pcie_cmd_to_optical_gtx_top/u_pcie_cmd_to_optical_top/u_pcie_bar_cmd_rx/commit_count_reg[28]) is unused and will be removed from module loopback_debug_bd_min_optical_loopback_debug_top_0_0.
+INFO: [Synth 8-3332] Sequential element (inst/u_pcie_cmd_to_optical_gtx_top/u_pcie_cmd_to_optical_top/u_pcie_bar_cmd_rx/commit_count_reg[29]) is unused and will be removed from module loopback_debug_bd_min_optical_loopback_debug_top_0_0.
+INFO: [Synth 8-3332] Sequential element (inst/u_pcie_cmd_to_optical_gtx_top/u_pcie_cmd_to_optical_top/u_pcie_bar_cmd_rx/commit_count_reg[30]) is unused and will be removed from module loopback_debug_bd_min_optical_loopback_debug_top_0_0.
+INFO: [Synth 8-3332] Sequential element (inst/u_pcie_cmd_to_optical_gtx_top/u_pcie_cmd_to_optical_top/u_pcie_bar_cmd_rx/commit_count_reg[31]) is unused and will be removed from module loopback_debug_bd_min_optical_loopback_debug_top_0_0.
+INFO: [Synth 8-3332] Sequential element (inst/u_pcie_cmd_to_optical_gtx_top/u_optical_stream_to_gtx32/state_reg[2]) is unused and will be removed from module loopback_debug_bd_min_optical_loopback_debug_top_0_0.
+INFO: [Synth 8-3332] Sequential element (inst/u_pcie_cmd_to_optical_gtx_top/u_optical_stream_to_gtx32/gtx_tx_word_index_reg[1]) is unused and will be removed from module loopback_debug_bd_min_optical_loopback_debug_top_0_0.
+---------------------------------------------------------------------------------
+Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:00:06 ; elapsed = 00:00:06 . Memory (MB): peak = 658.570 ; gain = 355.809
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start ROM, RAM, DSP and Shift Register Reporting
+---------------------------------------------------------------------------------
+
+Block RAM: Preliminary Mapping  Report (see note below)
++------------------+------------+------------------------+---+---+------------------------+---+---+------------------+--------+--------+
+|Module Name       | RTL Object | PORT A (Depth x Width) | W | R | PORT B (Depth x Width) | W | R | Ports driving FF | RAMB18 | RAMB36 | 
++------------------+------------+------------------------+---+---+------------------------+---+---+------------------+--------+--------+
+|simple_sync_fifo: | mem_reg    | 16 x 64(READ_FIRST)    | W |   | 16 x 64(WRITE_FIRST)   |   | R | Port A and B     | 0      | 1      | 
++------------------+------------+------------------------+---+---+------------------------+---+---+------------------+--------+--------+
+
+Note: The tale above is a preliminary report that shows the Block RAMs at the current stage of the synthesis flow. Some Block RAMs may be reimplemented as non Block RAM primitives later in the synthesis flow. Multiple instantiated Block RAMs are reported only once. 
+---------------------------------------------------------------------------------
+Finished ROM, RAM, DSP and Shift Register Reporting
+---------------------------------------------------------------------------------
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+No constraint files found.
+---------------------------------------------------------------------------------
+Start Timing Optimization
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Timing Optimization : Time (s): cpu = 00:00:06 ; elapsed = 00:00:06 . Memory (MB): peak = 658.570 ; gain = 355.809
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start ROM, RAM, DSP and Shift Register Reporting
+---------------------------------------------------------------------------------
+
+Block RAM: Final Mapping  Report
++------------------+------------+------------------------+---+---+------------------------+---+---+------------------+--------+--------+
+|Module Name       | RTL Object | PORT A (Depth x Width) | W | R | PORT B (Depth x Width) | W | R | Ports driving FF | RAMB18 | RAMB36 | 
++------------------+------------+------------------------+---+---+------------------------+---+---+------------------+--------+--------+
+|simple_sync_fifo: | mem_reg    | 16 x 64(READ_FIRST)    | W |   | 16 x 64(WRITE_FIRST)   |   | R | Port A and B     | 0      | 1      | 
++------------------+------------+------------------------+---+---+------------------------+---+---+------------------+--------+--------+
+
+---------------------------------------------------------------------------------
+Finished ROM, RAM, DSP and Shift Register Reporting
+---------------------------------------------------------------------------------
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+---------------------------------------------------------------------------------
+Start Technology Mapping
+---------------------------------------------------------------------------------
+INFO: [Synth 8-3886] merging instance 'inst/u_pcie_cmd_to_optical_gtx_top/u_pcie_cmd_to_optical_top/u_simple_sync_fifo/rd_ptr_reg_rep[2]' (FDRE) to 'inst/u_pcie_cmd_to_optical_gtx_top/u_pcie_cmd_to_optical_top/u_simple_sync_fifo/rd_ptr_reg[2]'
+INFO: [Synth 8-3886] merging instance 'inst/u_pcie_cmd_to_optical_gtx_top/u_pcie_cmd_to_optical_top/u_simple_sync_fifo/rd_ptr_reg_rep[1]' (FDRE) to 'inst/u_pcie_cmd_to_optical_gtx_top/u_pcie_cmd_to_optical_top/u_simple_sync_fifo/rd_ptr_reg[1]'
+INFO: [Synth 8-3886] merging instance 'inst/u_pcie_cmd_to_optical_gtx_top/u_pcie_cmd_to_optical_top/u_simple_sync_fifo/rd_ptr_reg_rep[0]' (FDRE) to 'inst/u_pcie_cmd_to_optical_gtx_top/u_pcie_cmd_to_optical_top/u_simple_sync_fifo/rd_ptr_reg[0]'
+INFO: [Synth 8-3886] merging instance 'inst/u_pcie_cmd_to_optical_gtx_top/u_pcie_cmd_to_optical_top/u_simple_sync_fifo/rd_ptr_reg_rep[3]' (FDRE) to 'inst/u_pcie_cmd_to_optical_gtx_top/u_pcie_cmd_to_optical_top/u_simple_sync_fifo/rd_ptr_reg[3]'
+INFO: [Synth 8-4480] The timing for the instance inst/u_pcie_cmd_to_optical_gtx_top/u_pcie_cmd_to_optical_top/u_simple_sync_fifo/mem_reg (implemented as a block RAM) might be sub-optimal as no optional output register could be merged into the block ram. Providing additional output register may help in improving timing.
+---------------------------------------------------------------------------------
+Finished Technology Mapping : Time (s): cpu = 00:00:06 ; elapsed = 00:00:06 . Memory (MB): peak = 662.680 ; gain = 359.918
+---------------------------------------------------------------------------------
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+---------------------------------------------------------------------------------
+Start IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Flattening Before IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Flattening Before IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Final Netlist Cleanup
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Final Netlist Cleanup
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished IO Insertion : Time (s): cpu = 00:00:06 ; elapsed = 00:00:07 . Memory (MB): peak = 662.680 ; gain = 359.918
+---------------------------------------------------------------------------------
+
+Report Check Netlist: 
++------+------------------+-------+---------+-------+------------------+
+|      |Item              |Errors |Warnings |Status |Description       |
++------+------------------+-------+---------+-------+------------------+
+|1     |multi_driven_nets |      0|        0|Passed |Multi driven nets |
++------+------------------+-------+---------+-------+------------------+
+---------------------------------------------------------------------------------
+Start Renaming Generated Instances
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Instances : Time (s): cpu = 00:00:06 ; elapsed = 00:00:07 . Memory (MB): peak = 662.680 ; gain = 359.918
+---------------------------------------------------------------------------------
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+---------------------------------------------------------------------------------
+Start Rebuilding User Hierarchy
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Rebuilding User Hierarchy : Time (s): cpu = 00:00:06 ; elapsed = 00:00:07 . Memory (MB): peak = 662.680 ; gain = 359.918
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Ports
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Ports : Time (s): cpu = 00:00:06 ; elapsed = 00:00:07 . Memory (MB): peak = 662.680 ; gain = 359.918
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Handling Custom Attributes
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:06 ; elapsed = 00:00:07 . Memory (MB): peak = 662.680 ; gain = 359.918
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Nets
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Nets : Time (s): cpu = 00:00:06 ; elapsed = 00:00:07 . Memory (MB): peak = 662.680 ; gain = 359.918
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Writing Synthesis Report
+---------------------------------------------------------------------------------
+
+Report BlackBoxes: 
++-+--------------+----------+
+| |BlackBox name |Instances |
++-+--------------+----------+
++-+--------------+----------+
+
+Report Cell Usage: 
++------+---------+------+
+|      |Cell     |Count |
++------+---------+------+
+|1     |CARRY4   |    57|
+|2     |LUT1     |    11|
+|3     |LUT2     |    10|
+|4     |LUT3     |    86|
+|5     |LUT4     |   107|
+|6     |LUT5     |    40|
+|7     |LUT6     |    63|
+|8     |MUXF7    |     1|
+|9     |RAMB36E1 |     1|
+|10    |FDRE     |  1043|
++------+---------+------+
+
+Report Instance Areas: 
++------+----------------------------------+-------------------------------+------+
+|      |Instance                          |Module                         |Cells |
++------+----------------------------------+-------------------------------+------+
+|1     |top                               |                               |  1419|
+|2     |  inst                            |min_optical_loopback_debug_top |  1419|
+|3     |    u_loopback_debug_block        |loopback_debug_block           |   716|
+|4     |      u_gtx_rx32_to_stream64      |gtx_rx32_to_stream64           |   231|
+|5     |      u_loopback_checker          |loopback_checker               |   219|
+|6     |      u_optical_cmd_rx            |optical_cmd_rx                 |   266|
+|7     |    u_pcie_cmd_to_optical_gtx_top |pcie_cmd_to_optical_gtx_top    |   703|
+|8     |      u_optical_stream_to_gtx32   |optical_stream_to_gtx32        |   202|
+|9     |      u_pcie_cmd_to_optical_top   |pcie_cmd_to_optical_top        |   501|
+|10    |        u_custom_optical_tx       |custom_optical_tx              |   266|
+|11    |        u_pcie_bar_cmd_rx         |pcie_bar_cmd_rx                |   182|
+|12    |        u_simple_sync_fifo        |simple_sync_fifo               |    53|
++------+----------------------------------+-------------------------------+------+
+---------------------------------------------------------------------------------
+Finished Writing Synthesis Report : Time (s): cpu = 00:00:06 ; elapsed = 00:00:07 . Memory (MB): peak = 662.680 ; gain = 359.918
+---------------------------------------------------------------------------------
+Synthesis finished with 0 errors, 0 critical warnings and 34 warnings.
+Synthesis Optimization Runtime : Time (s): cpu = 00:00:06 ; elapsed = 00:00:07 . Memory (MB): peak = 662.680 ; gain = 359.918
+Synthesis Optimization Complete : Time (s): cpu = 00:00:06 ; elapsed = 00:00:07 . Memory (MB): peak = 662.680 ; gain = 359.918
+INFO: [Project 1-571] Translating synthesized netlist
+INFO: [Netlist 29-17] Analyzing 59 Unisim elements for replacement
+INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
+INFO: [Project 1-570] Preparing netlist for logic optimization
+INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
+INFO: [Project 1-111] Unisim Transformation Summary:
+No Unisim elements were transformed.
+
+INFO: [Common 17-83] Releasing license: Synthesis
+107 Infos, 34 Warnings, 0 Critical Warnings and 0 Errors encountered.
+synth_design completed successfully
+synth_design: Time (s): cpu = 00:00:09 ; elapsed = 00:00:10 . Memory (MB): peak = 768.805 ; gain = 478.531
+INFO: [Timing 38-35] Done setting XDC timing constraints.
+INFO: [Common 17-1381] The checkpoint 'D:/Controler/Controler/Controler.runs/loopback_debug_bd_min_optical_loopback_debug_top_0_0_synth_1/loopback_debug_bd_min_optical_loopback_debug_top_0_0.dcp' has been generated.
+write_checkpoint: Time (s): cpu = 00:00:06 ; elapsed = 00:00:07 . Memory (MB): peak = 1306.062 ; gain = 537.258
+INFO: [Coretcl 2-1174] Renamed 11 cell refs.
+INFO: [Common 17-1381] The checkpoint 'D:/Controler/Controler/Controler.runs/loopback_debug_bd_min_optical_loopback_debug_top_0_0_synth_1/loopback_debug_bd_min_optical_loopback_debug_top_0_0.dcp' has been generated.
+INFO: [runtcl-4] Executing : report_utilization -file loopback_debug_bd_min_optical_loopback_debug_top_0_0_utilization_synth.rpt -pb loopback_debug_bd_min_optical_loopback_debug_top_0_0_utilization_synth.pb
+report_utilization: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.084 . Memory (MB): peak = 1307.008 ; gain = 0.000
+INFO: [Common 17-206] Exiting Vivado at Wed Apr  1 10:04:53 2026...
