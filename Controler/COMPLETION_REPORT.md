@@ -1,5 +1,8 @@
 # 📊 项目交付总结报告
 
+> 说明：本文档包含较早阶段的交付记录。
+> 当前 Tcl 使用方式已经简化，请优先参考 [TCL_USAGE.md](D:\Controler\Controler\TCL_USAGE.md)。
+
 ## 交付日期: 2026-03-26
 
 ---

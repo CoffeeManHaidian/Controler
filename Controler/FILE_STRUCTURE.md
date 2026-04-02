@@ -1,5 +1,9 @@
 # 项目文件树与交付物详解
 
+> 说明：仓库中的 Tcl 脚本已在后续版本中简化。
+> 当前请优先参考 [TCL_USAGE.md](D:\Controler\Controler\TCL_USAGE.md)。
+> 克隆项目后建议直接执行 `setup_project.tcl`，不要再按照本文中的旧 Tcl 名称操作。
+
 ## 📂 完整的项目文件结构
 
 ```
