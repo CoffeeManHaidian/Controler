@@ -26,6 +26,7 @@ module pcie_cmd_to_optical_hw_bringup_top #(
     reg        pcie_wr_en = 1'b0;
     reg [31:0] pcie_wr_addr = 32'd0;
     reg [31:0] pcie_wr_data = 32'd0;
+    reg [31:0] addr_counter = 32'd4;
     reg [31:0] data_counter = 32'd1;
 
     (* mark_debug = "true" *) wire [31:0] status_reg_dbg;
@@ -51,6 +52,7 @@ module pcie_cmd_to_optical_hw_bringup_top #(
             pcie_wr_en   <= 1'b0;
             pcie_wr_addr <= 32'd0;
             pcie_wr_data <= 32'd0;
+            addr_counter <= 32'd4;
             data_counter <= 32'd1;
         end else begin
             rst        <= 1'b0;
@@ -64,7 +66,7 @@ module pcie_cmd_to_optical_hw_bringup_top #(
                 ST_ADDR: begin
                     pcie_wr_en   <= 1'b1;
                     pcie_wr_addr <= 32'h0000_0000;
-                    pcie_wr_data <= 32'h0000_0004;
+                    pcie_wr_data <= addr_counter;
                     state        <= ST_DATA;
                 end
 
@@ -79,6 +81,7 @@ module pcie_cmd_to_optical_hw_bringup_top #(
                     pcie_wr_en   <= 1'b1;
                     pcie_wr_addr <= 32'h0000_0008;
                     pcie_wr_data <= 32'h0000_0001;
+                    addr_counter <= addr_counter + 32'd4;
                     data_counter <= data_counter + 1'b1;
                     wait_cnt     <= 24'd0;
                     state        <= ST_WAIT;

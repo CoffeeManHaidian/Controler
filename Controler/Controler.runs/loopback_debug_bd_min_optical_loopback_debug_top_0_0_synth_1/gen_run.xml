@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <GenRun Id="loopback_debug_bd_min_optical_loopback_debug_top_0_0_synth_1" LaunchPart="xc7k325tffg900-2" LaunchTime="1775009068">
   <File Type="PA-TCL" Name="loopback_debug_bd_min_optical_loopback_debug_top_0_0.tcl"/>
-  <File Type="RDS-PROPCONSTRS" Name="loopback_debug_bd_min_optical_loopback_debug_top_0_0_drc_synth.rpt"/>
   <File Type="REPORTS-TCL" Name="loopback_debug_bd_min_optical_loopback_debug_top_0_0_reports.tcl"/>
   <File Type="RDS-RDS" Name="loopback_debug_bd_min_optical_loopback_debug_top_0_0.vds"/>
   <File Type="RDS-UTIL" Name="loopback_debug_bd_min_optical_loopback_debug_top_0_0_utilization_synth.rpt"/>
   <File Type="RDS-UTIL-PB" Name="loopback_debug_bd_min_optical_loopback_debug_top_0_0_utilization_synth.pb"/>
   <File Type="RDS-DCP" Name="loopback_debug_bd_min_optical_loopback_debug_top_0_0.dcp"/>
-  <File Type="VDS-TIMINGSUMMARY" Name="loopback_debug_bd_min_optical_loopback_debug_top_0_0_timing_summary_synth.rpt"/>
-  <File Type="VDS-TIMING-PB" Name="loopback_debug_bd_min_optical_loopback_debug_top_0_0_timing_summary_synth.pb"/>
   <FileSet Name="sources" Type="BlockSrcs" RelSrcDir="$PSRCDIR/loopback_debug_bd_min_optical_loopback_debug_top_0_0">
     <File Path="$PSRCDIR/sources_1/bd/loopback_debug_bd/ip/loopback_debug_bd_min_optical_loopback_debug_top_0_0/loopback_debug_bd_min_optical_loopback_debug_top_0_0.xci">
       <FileInfo>
@@ -36,9 +33,7 @@
     </Config>
   </FileSet>
   <Strategy Version="1" Minor="2">
-    <StratHandle Name="Vivado Synthesis Defaults" Flow="Vivado Synthesis 2017">
-      <Desc>Vivado Synthesis Defaults</Desc>
-    </StratHandle>
+    <StratHandle Name="Vivado Synthesis Defaults" Flow="Vivado Synthesis 2017"/>
     <Step Id="synth_design"/>
   </Strategy>
 </GenRun>
