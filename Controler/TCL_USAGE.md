@@ -14,10 +14,10 @@
 
 ## 克隆项目后如何使用
 
-从 GitHub 克隆项目后，不需要先打开现成的 `.xpr`，直接在 Vivado Tcl Console 中执行：
+从 GitHub 克隆项目后，不需要先打开现成的 `.xpr`。先将 Vivado 的当前工作目录切换到仓库根目录，再在 Tcl Console 中执行：
 
 ```tcl
-source D:/Controler/Controler/setup_project.tcl
+source ./setup_project.tcl
 ```
 
 脚本会自动完成以下工作：
@@ -55,7 +55,7 @@ build/vivado/Controler/Controler.xpr
 如果已经完成综合，并希望确认当前顶层中的 `mark_debug` 信号是否存在，可以执行：
 
 ```tcl
-source D:/Controler/Controler/report_hw_bringup_mark_debug.tcl
+source ./report_hw_bringup_mark_debug.tcl
 ```
 
 这个脚本会列出当前综合设计中的调试网络，并检查以下关键调试信号是否都已保留：
@@ -95,5 +95,5 @@ source D:/Controler/Controler/report_hw_bringup_mark_debug.tcl
 当前如果要搭建工程，请只执行：
 
 ```tcl
-source D:/Controler/Controler/setup_project.tcl
+source ./setup_project.tcl
 ```

@@ -85,7 +85,7 @@
 推荐先打开 Tcl Console，执行：
 
 ```tcl
-source D:/Controler/Controler/report_hw_bringup_mark_debug.tcl
+source ./report_hw_bringup_mark_debug.tcl
 ```
 
 这个脚本会列出当前综合设计中所有带 `MARK_DEBUG` 的网络，并检查我们预期的调试信号是否都存在。
