@@ -6,6 +6,7 @@
 #include <cstring>
 #include <string>
 #include <thread>
+#include <vector>
 
 namespace {
 
@@ -46,6 +47,76 @@ struct StatusSnapshot {
     uint32_t board_test_status = 0;
     uint32_t commit_count = 0;
 };
+
+struct DevicePair {
+    std::string write_path;
+    std::string read_path;
+};
+
+bool can_open_device(const char* path, DWORD access) {
+    HANDLE dev = CreateFileA(path,
+                             access,
+                             0,
+                             nullptr,
+                             OPEN_EXISTING,
+                             FILE_ATTRIBUTE_NORMAL,
+                             nullptr);
+    if (dev == INVALID_HANDLE_VALUE) {
+        return false;
+    }
+    CloseHandle(dev);
+    return true;
+}
+
+DevicePair auto_detect_devices() {
+    std::vector<std::string> user_nodes;
+    std::vector<std::string> control_nodes;
+    std::vector<std::string> h2c_nodes;
+    std::vector<std::string> c2h_nodes;
+
+    for (int dev = 0; dev < 8; ++dev) {
+        char buf[64];
+
+        std::snprintf(buf, sizeof(buf), "\\\\.\\xdma%d_user", dev);
+        user_nodes.emplace_back(buf);
+
+        std::snprintf(buf, sizeof(buf), "\\\\.\\xdma%d_control", dev);
+        control_nodes.emplace_back(buf);
+
+        for (int ch = 0; ch < 4; ++ch) {
+            std::snprintf(buf, sizeof(buf), "\\\\.\\xdma%d_h2c_%d", dev, ch);
+            h2c_nodes.emplace_back(buf);
+
+            std::snprintf(buf, sizeof(buf), "\\\\.\\xdma%d_c2h_%d", dev, ch);
+            c2h_nodes.emplace_back(buf);
+        }
+    }
+
+    for (const auto& path : user_nodes) {
+        if (can_open_device(path.c_str(), GENERIC_READ | GENERIC_WRITE)) {
+            return {path, path};
+        }
+    }
+
+    for (const auto& write_path : h2c_nodes) {
+        if (!can_open_device(write_path.c_str(), GENERIC_WRITE)) {
+            continue;
+        }
+        for (const auto& read_path : c2h_nodes) {
+            if (can_open_device(read_path.c_str(), GENERIC_READ)) {
+                return {write_path, read_path};
+            }
+        }
+    }
+
+    for (const auto& path : control_nodes) {
+        if (can_open_device(path.c_str(), GENERIC_READ | GENERIC_WRITE)) {
+            return {path, path};
+        }
+    }
+
+    return {"", ""};
+}
 
 bool reg_read32(HANDLE dev, LONG offset, uint32_t* value) {
     LARGE_INTEGER pos;
@@ -112,37 +183,38 @@ void dump_snapshot(const StatusSnapshot& snap, const char* title) {
     std::printf("COMMIT_COUNT       : %u\n", snap.commit_count);
 }
 
-bool clear_status(HANDLE dev) {
-    return reg_write32(dev, REG_CMD_CTRL, CTRL_CLEAR_STATUS);
+bool clear_status(HANDLE write_dev) {
+    return reg_write32(write_dev, REG_CMD_CTRL, CTRL_CLEAR_STATUS);
 }
 
-bool enable_tx(HANDLE dev) {
-    return reg_write32(dev, REG_CMD_CFG, CFG_TX_ENABLE);
+bool enable_tx(HANDLE write_dev) {
+    return reg_write32(write_dev, REG_CMD_CFG, CFG_TX_ENABLE);
 }
 
-bool send_one(HANDLE dev, uint32_t addr, uint32_t data) {
-    return reg_write32(dev, REG_CMD_ADDR, addr) &&
-           reg_write32(dev, REG_CMD_DATA, data) &&
-           reg_write32(dev, REG_CMD_CTRL, CTRL_COMMIT);
+bool send_one(HANDLE write_dev, uint32_t addr, uint32_t data) {
+    return reg_write32(write_dev, REG_CMD_ADDR, addr) &&
+           reg_write32(write_dev, REG_CMD_DATA, data) &&
+           reg_write32(write_dev, REG_CMD_CTRL, CTRL_COMMIT);
 }
 
-bool verify_single(HANDLE dev, uint32_t addr, uint32_t data, DWORD settle_ms) {
+bool verify_single(HANDLE write_dev, HANDLE read_dev, uint32_t addr, uint32_t data,
+                   DWORD settle_ms) {
     StatusSnapshot before;
     StatusSnapshot after;
 
-    if (!read_snapshot(dev, &before)) {
+    if (!read_snapshot(read_dev, &before)) {
         std::printf("Failed to read pre-send status, GetLastError=%lu\n", GetLastError());
         return false;
     }
 
-    if (!send_one(dev, addr, data)) {
+    if (!send_one(write_dev, addr, data)) {
         std::printf("Failed to send one frame, GetLastError=%lu\n", GetLastError());
         return false;
     }
 
     std::this_thread::sleep_for(std::chrono::milliseconds(settle_ms));
 
-    if (!read_snapshot(dev, &after)) {
+    if (!read_snapshot(read_dev, &after)) {
         std::printf("Failed to read post-send status, GetLastError=%lu\n", GetLastError());
         return false;
     }
@@ -163,7 +235,7 @@ bool verify_single(HANDLE dev, uint32_t addr, uint32_t data, DWORD settle_ms) {
     return ok;
 }
 
-bool run_burst(HANDLE dev,
+bool run_burst(HANDLE write_dev,
                uint32_t base_addr,
                uint32_t base_data,
                uint32_t count,
@@ -172,7 +244,7 @@ bool run_burst(HANDLE dev,
     for (uint32_t i = 0; i < count; ++i) {
         const uint32_t addr = base_addr + (i * 4u);
         const uint32_t data = base_data + i;
-        if (!send_one(dev, addr, data)) {
+        if (!send_one(write_dev, addr, data)) {
             std::printf("Failed at burst frame %u, GetLastError=%lu\n", i, GetLastError());
             return false;
         }
@@ -189,7 +261,8 @@ bool run_burst(HANDLE dev,
     return true;
 }
 
-bool verify_burst(HANDLE dev,
+bool verify_burst(HANDLE write_dev,
+                  HANDLE read_dev,
                   uint32_t base_addr,
                   uint32_t base_data,
                   uint32_t count,
@@ -198,16 +271,16 @@ bool verify_burst(HANDLE dev,
     StatusSnapshot before;
     StatusSnapshot after;
 
-    if (!read_snapshot(dev, &before)) {
+    if (!read_snapshot(read_dev, &before)) {
         std::printf("Failed to read pre-burst status, GetLastError=%lu\n", GetLastError());
         return false;
     }
 
-    if (!run_burst(dev, base_addr, base_data, count, interval_ms, settle_ms)) {
+    if (!run_burst(write_dev, base_addr, base_data, count, interval_ms, settle_ms)) {
         return false;
     }
 
-    if (!read_snapshot(dev, &after)) {
+    if (!read_snapshot(read_dev, &after)) {
         std::printf("Failed to read post-burst status, GetLastError=%lu\n", GetLastError());
         return false;
     }
@@ -237,11 +310,11 @@ bool verify_burst(HANDLE dev,
     return ok;
 }
 
-void measure_rate(HANDLE dev, DWORD window_ms) {
+void measure_rate(HANDLE read_dev, DWORD window_ms) {
     StatusSnapshot s0;
     StatusSnapshot s1;
 
-    if (!read_snapshot(dev, &s0)) {
+    if (!read_snapshot(read_dev, &s0)) {
         std::printf("Failed to read rate-start status, GetLastError=%lu\n", GetLastError());
         return;
     }
@@ -250,7 +323,7 @@ void measure_rate(HANDLE dev, DWORD window_ms) {
     std::this_thread::sleep_for(std::chrono::milliseconds(window_ms));
     const auto t1 = std::chrono::steady_clock::now();
 
-    if (!read_snapshot(dev, &s1)) {
+    if (!read_snapshot(read_dev, &s1)) {
         std::printf("Failed to read rate-end status, GetLastError=%lu\n", GetLastError());
         return;
     }
@@ -275,7 +348,7 @@ void print_usage(const char* exe) {
     std::printf("  %s [device] burst <base_addr_hex> <base_data_hex> <count> [interval_ms] [settle_ms]\n", exe);
     std::printf("  %s [device] rate <window_ms>\n", exe);
     std::printf("\n");
-    std::printf("Default device: \\\\.\\xdma0_user\n");
+    std::printf("Default device: auto-detect (xdma*_user or xdma*_h2c_*/c2h_* or xdma*_control)\n");
 }
 
 bool parse_u32(const char* text, uint32_t* value) {
@@ -291,39 +364,67 @@ bool parse_u32(const char* text, uint32_t* value) {
 }  // namespace
 
 int main(int argc, char* argv[]) {
-    const char* device_path = "\\\\.\\xdma0_user";
+    std::string write_device_path = "\\\\.\\xdma0_user";
+    std::string read_device_path = "\\\\.\\xdma0_user";
     int argi = 1;
 
     if (argc > 1 && std::strncmp(argv[1], "\\\\.\\", 4) == 0) {
-        device_path = argv[1];
+        write_device_path = argv[1];
+        read_device_path = argv[1];
         argi = 2;
+    } else {
+        DevicePair detected = auto_detect_devices();
+        if (!detected.write_path.empty()) {
+            write_device_path = detected.write_path;
+            read_device_path = detected.read_path;
+        }
     }
 
-    HANDLE dev = CreateFileA(device_path,
-                             GENERIC_READ | GENERIC_WRITE,
-                             0,
-                             nullptr,
-                             OPEN_EXISTING,
-                             FILE_ATTRIBUTE_NORMAL,
-                             nullptr);
-    if (dev == INVALID_HANDLE_VALUE) {
-        std::printf("Failed to open device: %s, GetLastError=%lu\n", device_path, GetLastError());
+    HANDLE write_dev = CreateFileA(write_device_path.c_str(),
+                                   GENERIC_WRITE,
+                                   0,
+                                   nullptr,
+                                   OPEN_EXISTING,
+                                   FILE_ATTRIBUTE_NORMAL,
+                                   nullptr);
+    if (write_dev == INVALID_HANDLE_VALUE) {
+        std::printf("Failed to open write device: %s, GetLastError=%lu\n",
+                    write_device_path.c_str(),
+                    GetLastError());
         return 1;
     }
 
-    std::printf("Using device: %s\n", device_path);
+    HANDLE read_dev = CreateFileA(read_device_path.c_str(),
+                                  GENERIC_READ,
+                                  0,
+                                  nullptr,
+                                  OPEN_EXISTING,
+                                  FILE_ATTRIBUTE_NORMAL,
+                                  nullptr);
+    if (read_dev == INVALID_HANDLE_VALUE) {
+        std::printf("Failed to open read device: %s, GetLastError=%lu\n",
+                    read_device_path.c_str(),
+                    GetLastError());
+        CloseHandle(write_dev);
+        return 1;
+    }
 
-    if (!enable_tx(dev)) {
+    std::printf("Using write device: %s\n", write_device_path.c_str());
+    std::printf("Using read  device: %s\n", read_device_path.c_str());
+
+    if (!enable_tx(write_dev)) {
         std::printf("Failed to set tx_enable, GetLastError=%lu\n", GetLastError());
-        CloseHandle(dev);
+        CloseHandle(read_dev);
+        CloseHandle(write_dev);
         return 1;
     }
 
     if (argi >= argc) {
-        clear_status(dev);
-        const bool ok = verify_burst(dev, 0x00001000u, 0xA5A50000u, 100u, 2u, 50u);
-        measure_rate(dev, 1000);
-        CloseHandle(dev);
+        clear_status(write_dev);
+        const bool ok = verify_burst(write_dev, read_dev, 0x00001000u, 0xA5A50000u, 100u, 2u, 50u);
+        measure_rate(read_dev, 1000);
+        CloseHandle(read_dev);
+        CloseHandle(write_dev);
         return ok ? 0 : 2;
     }
 
@@ -338,13 +439,15 @@ int main(int argc, char* argv[]) {
             !parse_u32(argv[argi + 1], &data) ||
             (argi + 2 < argc && !parse_u32(argv[argi + 2], &settle_ms))) {
             print_usage(argv[0]);
-            CloseHandle(dev);
+            CloseHandle(read_dev);
+            CloseHandle(write_dev);
             return 1;
         }
 
-        clear_status(dev);
-        const bool ok = verify_single(dev, addr, data, settle_ms);
-        CloseHandle(dev);
+        clear_status(write_dev);
+        const bool ok = verify_single(write_dev, read_dev, addr, data, settle_ms);
+        CloseHandle(read_dev);
+        CloseHandle(write_dev);
         return ok ? 0 : 2;
     }
 
@@ -361,13 +464,16 @@ int main(int argc, char* argv[]) {
             (argi + 3 < argc && !parse_u32(argv[argi + 3], &interval_ms)) ||
             (argi + 4 < argc && !parse_u32(argv[argi + 4], &settle_ms))) {
             print_usage(argv[0]);
-            CloseHandle(dev);
+            CloseHandle(read_dev);
+            CloseHandle(write_dev);
             return 1;
         }
 
-        clear_status(dev);
-        const bool ok = verify_burst(dev, base_addr, base_data, count, interval_ms, settle_ms);
-        CloseHandle(dev);
+        clear_status(write_dev);
+        const bool ok =
+            verify_burst(write_dev, read_dev, base_addr, base_data, count, interval_ms, settle_ms);
+        CloseHandle(read_dev);
+        CloseHandle(write_dev);
         return ok ? 0 : 2;
     }
 
@@ -375,15 +481,18 @@ int main(int argc, char* argv[]) {
         uint32_t window_ms = 1000;
         if (argi < argc && !parse_u32(argv[argi], &window_ms)) {
             print_usage(argv[0]);
-            CloseHandle(dev);
+            CloseHandle(read_dev);
+            CloseHandle(write_dev);
             return 1;
         }
-        measure_rate(dev, window_ms);
-        CloseHandle(dev);
+        measure_rate(read_dev, window_ms);
+        CloseHandle(read_dev);
+        CloseHandle(write_dev);
         return 0;
     }
 
     print_usage(argv[0]);
-    CloseHandle(dev);
+    CloseHandle(read_dev);
+    CloseHandle(write_dev);
     return 1;
 }
