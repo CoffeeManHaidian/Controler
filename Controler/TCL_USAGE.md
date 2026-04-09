@@ -28,12 +28,23 @@ source ./setup_project.tcl
 4. 添加板级约束文件
 5. 添加 `gtwizard_0.xci`
 6. 设置综合顶层为 `pcie_cmd_to_optical_hw_bringup_top`
-7. 设置仿真顶层为 `tb_loopback_debug_block`
+7. 设置仿真顶层为 `tb_host_register_loopback`
 
 生成的工程默认位置为：
 
 ```text
 build/vivado/Controler/Controler.xpr
+```
+
+默认策略说明：
+
+- 综合顶层保持为板上自激励 bring-up 版本
+- 仿真顶层默认切到主机寄存器回环验证版本
+
+如果后续要切到主机控制板级顶层，可以在 Vivado 中把综合顶层改成：
+
+```text
+pcie_cmd_to_optical_host_loopback_top
 ```
 
 ## 推荐后续流程
@@ -96,4 +107,35 @@ source ./report_hw_bringup_mark_debug.tcl
 
 ```tcl
 source ./setup_project.tcl
+```
+
+## XDMA 参考 IP 的自动接入
+
+`setup_project.tcl` 现在会尝试自动检测并加入这个参考工程中的 XDMA IP：
+
+```text
+D:/FPGA/No.226_pcie_xdma_sys_x8_5g/No.226_pcie_xdma_sys_x8_5g.srcs/sources_1/bd/xdma_sys/ip/xdma_sys_xdma_0_0/xdma_sys_xdma_0_0.xci
+```
+
+如果该文件存在，脚本会：
+
+1. 自动把 `xdma_sys_xdma_0_0.xci` 加入当前工程
+2. 自动生成该 IP 的输出目标
+
+如果该文件不存在，也不会影响普通 bring-up 路线，只是 PCIe XDMA 顶层暂时不能综合。
+
+## 当前综合顶层策略
+
+默认综合顶层仍然是：
+
+```text
+pcie_cmd_to_optical_hw_bringup_top
+```
+
+这样可以保证板级发送/回环 bring-up 路线不被打断。
+
+如果你要切到 PCIe XDMA 集成顶层，请在 Vivado 中把综合顶层改成：
+
+```text
+pcie_xdma_sfp_loopback_top
 ```

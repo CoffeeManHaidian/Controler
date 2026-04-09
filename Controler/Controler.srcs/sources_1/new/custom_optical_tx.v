@@ -1,6 +1,7 @@
 module custom_optical_tx (
     input  wire        clk,
     input  wire        rst,
+    input  wire        clear_counters,
 
     // Command FIFO input: {addr[31:0], data[31:0]}
     input  wire [63:0] fifo_rd_data,
@@ -44,7 +45,7 @@ module custom_optical_tx (
     endfunction
 
     always @(posedge clk) begin
-        if (rst) begin
+        if (rst || clear_counters) begin
             state          <= ST_IDLE;
             seq_cnt        <= 32'd0;
             cmd_addr       <= 32'd0;

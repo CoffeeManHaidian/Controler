@@ -30,6 +30,7 @@ module tb_loopback_debug_block;
     custom_optical_tx u_custom_optical_tx (
         .clk           (clk),
         .rst           (rst),
+        .clear_counters(1'b0),
         .fifo_rd_data  (fifo_rd_data),
         .fifo_empty    (fifo_empty),
         .fifo_rd_en    (fifo_rd_en),
@@ -59,6 +60,7 @@ module tb_loopback_debug_block;
     loopback_debug_block u_loopback_debug_block (
         .rx_clk            (clk),
         .rst               (rst),
+        .clear_counters    (1'b0),
         .phy_rx_data       (gtx_tx_data),
         .phy_rx_data_valid (gtx_tx_valid),
         .rx_frame_count    (rx_frame_count),

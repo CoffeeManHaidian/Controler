@@ -1,0 +1,73 @@
+module pcie_cmd_to_optical_host_loopback_top #(
+    parameter ENABLE_LOOPBACK_DEBUG = 1'b1
+) (
+    input  wire        SYSCLK_I,
+    input  wire        GTREFCLK1_P,
+    input  wire        GTREFCLK1_N,
+    input  wire        SFP_RX_P,
+    input  wire        SFP_RX_N,
+    output wire        SFP_TX_P,
+    output wire        SFP_TX_N,
+    input  wire        SFP_TXFAULT,
+    input  wire        SFP_LOS,
+    output wire        SFP_TXDISABLE,
+
+    input  wire        rst,
+    input  wire        host_wr_en,
+    input  wire [31:0] host_wr_addr,
+    input  wire [31:0] host_wr_data,
+    input  wire        host_rd_en,
+    input  wire [31:0] host_rd_addr,
+    output wire [31:0] host_rd_data,
+
+    output wire [31:0] status_reg,
+    output wire [31:0] tx_frame_count,
+    output wire [31:0] optical_status,
+    output wire [31:0] gtx_tx_word_count,
+    output wire [31:0] phy_debug_status,
+    output wire [31:0] rx_frame_count,
+    output wire [31:0] crc_error_count,
+    output wire [31:0] format_error_count,
+    output wire [31:0] match_count,
+    output wire [31:0] last_rx_seq,
+    output wire [31:0] last_rx_addr,
+    output wire [31:0] last_rx_data,
+    output wire [31:0] board_test_status
+);
+
+    pcie_cmd_to_optical_board_top #(
+        .ENABLE_LOOPBACK_DEBUG(ENABLE_LOOPBACK_DEBUG)
+    ) u_board_top (
+        .SYSCLK_I          (SYSCLK_I),
+        .GTREFCLK1_P       (GTREFCLK1_P),
+        .GTREFCLK1_N       (GTREFCLK1_N),
+        .SFP_RX_P          (SFP_RX_P),
+        .SFP_RX_N          (SFP_RX_N),
+        .SFP_TX_P          (SFP_TX_P),
+        .SFP_TX_N          (SFP_TX_N),
+        .SFP_TXFAULT       (SFP_TXFAULT),
+        .SFP_LOS           (SFP_LOS),
+        .SFP_TXDISABLE     (SFP_TXDISABLE),
+        .rst               (rst),
+        .pcie_wr_en        (host_wr_en),
+        .pcie_wr_addr      (host_wr_addr),
+        .pcie_wr_data      (host_wr_data),
+        .pcie_rd_en        (host_rd_en),
+        .pcie_rd_addr      (host_rd_addr),
+        .pcie_rd_data      (host_rd_data),
+        .status_reg        (status_reg),
+        .tx_frame_count    (tx_frame_count),
+        .optical_status    (optical_status),
+        .gtx_tx_word_count (gtx_tx_word_count),
+        .phy_debug_status  (phy_debug_status),
+        .rx_frame_count    (rx_frame_count),
+        .crc_error_count   (crc_error_count),
+        .format_error_count(format_error_count),
+        .match_count       (match_count),
+        .last_rx_seq       (last_rx_seq),
+        .last_rx_addr      (last_rx_addr),
+        .last_rx_data      (last_rx_data),
+        .board_test_status (board_test_status)
+    );
+
+endmodule

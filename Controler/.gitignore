@@ -1,0 +1,5 @@
+*.obj
+*.pdb
+*.ilk
+build/
+xdma_loopback_verify_win.exe

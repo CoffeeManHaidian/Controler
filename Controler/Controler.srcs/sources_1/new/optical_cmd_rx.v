@@ -1,6 +1,7 @@
 module optical_cmd_rx (
     input  wire        clk,
     input  wire        rst,
+    input  wire        clear_counters,
 
     input  wire [63:0] rx_data,
     input  wire [7:0]  rx_keep,
@@ -43,7 +44,7 @@ module optical_cmd_rx (
     assign rx_ready = 1'b1;
 
     always @(posedge clk) begin
-        if (rst) begin
+        if (rst || clear_counters) begin
             state              <= ST_IDLE;
             cmd_valid          <= 1'b0;
             crc_ok             <= 1'b0;

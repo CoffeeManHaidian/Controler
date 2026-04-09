@@ -1,6 +1,7 @@
 module loopback_debug_block (
     input  wire        rx_clk,
     input  wire        rst,
+    input  wire        clear_counters,
 
     input  wire [31:0] phy_rx_data,
     input  wire        phy_rx_data_valid,
@@ -41,6 +42,7 @@ module loopback_debug_block (
     optical_cmd_rx u_optical_cmd_rx (
         .clk               (rx_clk),
         .rst               (rst),
+        .clear_counters    (clear_counters),
         .rx_data           (rx_axis_tdata),
         .rx_keep           (rx_axis_tkeep),
         .rx_valid          (rx_axis_tvalid),
@@ -60,6 +62,7 @@ module loopback_debug_block (
     loopback_checker u_loopback_checker (
         .clk               (rx_clk),
         .rst               (rst),
+        .clear_counters    (clear_counters),
         .cmd_valid         (cmd_valid),
         .crc_ok            (crc_ok),
         .format_ok         (format_ok),

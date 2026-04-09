@@ -16,6 +16,9 @@ module pcie_cmd_to_optical_board_top #(
     input  wire        pcie_wr_en,
     input  wire [31:0] pcie_wr_addr,
     input  wire [31:0] pcie_wr_data,
+    input  wire        pcie_rd_en,
+    input  wire [31:0] pcie_rd_addr,
+    output wire [31:0] pcie_rd_data,
 
     output wire [31:0] status_reg,
     output wire [31:0] tx_frame_count,
@@ -67,6 +70,9 @@ module pcie_cmd_to_optical_board_top #(
     wire [31:0] last_rx_seq_dbg;
     wire [31:0] last_rx_addr_dbg;
     wire [31:0] last_rx_data_dbg;
+    wire        clear_status_pulse_sys;
+    reg  [2:0]  clear_status_sync = 3'd0;
+    wire        clear_status_pulse_rx;
 
     pcie_cmd_to_optical_gtx_top u_core (
         .SYSCLK_I            (SYSCLK_I),
@@ -74,6 +80,9 @@ module pcie_cmd_to_optical_board_top #(
         .pcie_wr_en          (pcie_wr_en),
         .pcie_wr_addr        (pcie_wr_addr),
         .pcie_wr_data        (pcie_wr_data),
+        .pcie_rd_en          (pcie_rd_en),
+        .pcie_rd_addr        (pcie_rd_addr),
+        .pcie_rd_data        (pcie_rd_data),
         .sfp_signal_detect   (~SFP_LOS),
         .sfp_tx_fault        (SFP_TXFAULT),
         .phy_tx_resetdone    (phy_tx_resetdone),
@@ -91,7 +100,17 @@ module pcie_cmd_to_optical_board_top #(
         .gtx_tx_word_count   (gtx_tx_word_count),
         .status_reg          (status_reg),
         .tx_frame_count      (tx_frame_count),
-        .optical_status      (optical_status)
+        .optical_status      (optical_status),
+        .phy_debug_status    (phy_debug_status),
+        .rx_frame_count      (rx_frame_count),
+        .match_count         (match_count),
+        .crc_error_count     (crc_error_count),
+        .format_error_count  (format_error_count),
+        .last_rx_seq         (last_rx_seq),
+        .last_rx_addr        (last_rx_addr),
+        .last_rx_data        (last_rx_data),
+        .board_test_status   (board_test_status),
+        .clear_status_pulse  (clear_status_pulse_sys)
     );
 
     assign tx_fifo_din = {gtx_tx_word_index, gtx_tx_last, gtx_tx_data};
@@ -139,11 +158,22 @@ module pcie_cmd_to_optical_board_top #(
         .rx_data_valid   (phy_rx_data_valid)
     );
 
+    always @(posedge rx_usrclk2_out or posedge rst) begin
+        if (rst) begin
+            clear_status_sync <= 3'd0;
+        end else begin
+            clear_status_sync <= {clear_status_sync[1:0], clear_status_pulse_sys};
+        end
+    end
+
+    assign clear_status_pulse_rx = clear_status_sync[2] ^ clear_status_sync[1];
+
     generate
         if (ENABLE_LOOPBACK_DEBUG) begin : gen_loopback_debug
             loopback_debug_block u_loopback_debug_block (
                 .rx_clk            (rx_usrclk2_out),
                 .rst               (rst),
+                .clear_counters    (clear_status_pulse_rx),
                 .phy_rx_data       (phy_rx_data),
                 .phy_rx_data_valid (phy_rx_data_valid),
                 .rx_frame_count    (rx_frame_count_dbg),

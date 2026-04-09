@@ -6,6 +6,9 @@ module pcie_cmd_to_optical_top (
     input  wire        pcie_wr_en,
     input  wire [31:0] pcie_wr_addr,
     input  wire [31:0] pcie_wr_data,
+    input  wire        pcie_rd_en,
+    input  wire [31:0] pcie_rd_addr,
+    output wire [31:0] pcie_rd_data,
 
     // Custom optical TX user interface toward GTX/GTH or Aurora wrapper
     output wire [63:0] optical_tx_data,
@@ -20,10 +23,20 @@ module pcie_cmd_to_optical_top (
     input  wire        phy_tx_resetdone,
     input  wire        phy_rx_resetdone,
     input  wire        phy_channel_up,
+    input  wire [31:0] phy_debug_status,
+    input  wire [31:0] rx_frame_count,
+    input  wire [31:0] match_count,
+    input  wire [31:0] crc_error_count,
+    input  wire [31:0] format_error_count,
+    input  wire [31:0] last_rx_seq,
+    input  wire [31:0] last_rx_addr,
+    input  wire [31:0] last_rx_data,
+    input  wire [31:0] board_test_status,
 
     output wire [31:0] status_reg,
     output wire [31:0] tx_frame_count,
-    output wire [31:0] optical_status
+    output wire [31:0] optical_status,
+    output wire        clear_status_pulse
 );
 
     wire        fifo_wr_en;
@@ -40,11 +53,28 @@ module pcie_cmd_to_optical_top (
         .wr_en       (pcie_wr_en),
         .wr_addr     (pcie_wr_addr),
         .wr_data     (pcie_wr_data),
+        .rd_en       (pcie_rd_en),
+        .rd_addr     (pcie_rd_addr),
+        .rd_data     (pcie_rd_data),
         .fifo_wr_en  (fifo_wr_en),
         .fifo_wr_data(fifo_wr_data),
         .fifo_full   (fifo_full),
+        .tx_enable   (),
+        .test_mode   (),
+        .clear_status_pulse(clear_status_pulse),
         .status_reg  (status_reg),
-        .fifo_empty  (fifo_empty)
+        .fifo_empty  (fifo_empty),
+        .tx_frame_count   (tx_frame_count),
+        .rx_frame_count   (rx_frame_count),
+        .match_count      (match_count),
+        .crc_error_count  (crc_error_count),
+        .format_error_count(format_error_count),
+        .last_rx_seq      (last_rx_seq),
+        .last_rx_addr     (last_rx_addr),
+        .last_rx_data     (last_rx_data),
+        .optical_status   (optical_status),
+        .phy_debug_status (phy_debug_status),
+        .board_test_status(board_test_status)
     );
 
     simple_sync_fifo #(
@@ -66,6 +96,7 @@ module pcie_cmd_to_optical_top (
     custom_optical_tx u_custom_optical_tx (
         .clk           (clk),
         .rst           (rst),
+        .clear_counters(clear_status_pulse),
         .fifo_rd_data  (fifo_rd_data),
         .fifo_empty    (fifo_empty),
         .fifo_rd_en    (fifo_rd_en),

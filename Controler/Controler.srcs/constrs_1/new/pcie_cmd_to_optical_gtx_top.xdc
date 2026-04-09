@@ -11,3 +11,4 @@ create_clock -period 20.000 -name sys_clk_50m [get_ports SYSCLK_I]
 # This top is the logic-side integration top. The actual GTX differential
 # pins should be constrained in the future GTX Wizard / custom PHY wrapper.
 
+

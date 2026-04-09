@@ -1,6 +1,7 @@
 module loopback_checker (
     input  wire        clk,
     input  wire        rst,
+    input  wire        clear_counters,
 
     input  wire        cmd_valid,
     input  wire        crc_ok,
@@ -18,7 +19,7 @@ module loopback_checker (
 );
 
     always @(posedge clk) begin
-        if (rst) begin
+        if (rst || clear_counters) begin
             match_count        <= 32'd0;
             crc_error_count    <= 32'd0;
             format_error_count <= 32'd0;

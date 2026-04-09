@@ -27,6 +27,7 @@ module tb_optical_cmd_loopback;
     custom_optical_tx u_custom_optical_tx (
         .clk           (clk),
         .rst           (rst),
+        .clear_counters(1'b0),
         .fifo_rd_data  (fifo_rd_data),
         .fifo_empty    (fifo_empty),
         .fifo_rd_en    (fifo_rd_en),
@@ -41,6 +42,7 @@ module tb_optical_cmd_loopback;
     optical_cmd_rx u_optical_cmd_rx (
         .clk               (clk),
         .rst               (rst),
+        .clear_counters    (1'b0),
         .rx_data           (tx_data),
         .rx_keep           (tx_keep),
         .rx_valid          (tx_valid),

@@ -1,0 +1,104 @@
+module xdma_m_axil_optical_loopback_top #(
+    parameter ENABLE_LOOPBACK_DEBUG = 1'b1
+) (
+    input  wire        axil_aclk,
+    input  wire        axil_aresetn,
+
+    input  wire [31:0] m_axil_awaddr,
+    input  wire [2:0]  m_axil_awprot,
+    input  wire        m_axil_awvalid,
+    output wire        m_axil_awready,
+
+    input  wire [31:0] m_axil_wdata,
+    input  wire [3:0]  m_axil_wstrb,
+    input  wire        m_axil_wvalid,
+    output wire        m_axil_wready,
+
+    output wire [1:0]  m_axil_bresp,
+    output wire        m_axil_bvalid,
+    input  wire        m_axil_bready,
+
+    input  wire [31:0] m_axil_araddr,
+    input  wire [2:0]  m_axil_arprot,
+    input  wire        m_axil_arvalid,
+    output wire        m_axil_arready,
+
+    output wire [31:0] m_axil_rdata,
+    output wire [1:0]  m_axil_rresp,
+    output wire        m_axil_rvalid,
+    input  wire        m_axil_rready,
+
+    input  wire        GTREFCLK1_P,
+    input  wire        GTREFCLK1_N,
+    input  wire        SFP_RX_P,
+    input  wire        SFP_RX_N,
+    output wire        SFP_TX_P,
+    output wire        SFP_TX_N,
+    input  wire        SFP_TXFAULT,
+    input  wire        SFP_LOS,
+    output wire        SFP_TXDISABLE,
+
+    output wire [31:0] status_reg,
+    output wire [31:0] tx_frame_count,
+    output wire [31:0] optical_status,
+    output wire [31:0] gtx_tx_word_count,
+    output wire [31:0] phy_debug_status,
+    output wire [31:0] rx_frame_count,
+    output wire [31:0] crc_error_count,
+    output wire [31:0] format_error_count,
+    output wire [31:0] match_count,
+    output wire [31:0] last_rx_seq,
+    output wire [31:0] last_rx_addr,
+    output wire [31:0] last_rx_data,
+    output wire [31:0] board_test_status
+);
+
+    pcie_cmd_to_optical_axil_loopback_top #(
+        .ENABLE_LOOPBACK_DEBUG(ENABLE_LOOPBACK_DEBUG)
+    ) u_axil_loopback_top (
+        .s_axil_aclk       (axil_aclk),
+        .s_axil_aresetn    (axil_aresetn),
+        .s_axil_awaddr     (m_axil_awaddr),
+        .s_axil_awprot     (m_axil_awprot),
+        .s_axil_awvalid    (m_axil_awvalid),
+        .s_axil_awready    (m_axil_awready),
+        .s_axil_wdata      (m_axil_wdata),
+        .s_axil_wstrb      (m_axil_wstrb),
+        .s_axil_wvalid     (m_axil_wvalid),
+        .s_axil_wready     (m_axil_wready),
+        .s_axil_bresp      (m_axil_bresp),
+        .s_axil_bvalid     (m_axil_bvalid),
+        .s_axil_bready     (m_axil_bready),
+        .s_axil_araddr     (m_axil_araddr),
+        .s_axil_arprot     (m_axil_arprot),
+        .s_axil_arvalid    (m_axil_arvalid),
+        .s_axil_arready    (m_axil_arready),
+        .s_axil_rdata      (m_axil_rdata),
+        .s_axil_rresp      (m_axil_rresp),
+        .s_axil_rvalid     (m_axil_rvalid),
+        .s_axil_rready     (m_axil_rready),
+        .GTREFCLK1_P       (GTREFCLK1_P),
+        .GTREFCLK1_N       (GTREFCLK1_N),
+        .SFP_RX_P          (SFP_RX_P),
+        .SFP_RX_N          (SFP_RX_N),
+        .SFP_TX_P          (SFP_TX_P),
+        .SFP_TX_N          (SFP_TX_N),
+        .SFP_TXFAULT       (SFP_TXFAULT),
+        .SFP_LOS           (SFP_LOS),
+        .SFP_TXDISABLE     (SFP_TXDISABLE),
+        .status_reg        (status_reg),
+        .tx_frame_count    (tx_frame_count),
+        .optical_status    (optical_status),
+        .gtx_tx_word_count (gtx_tx_word_count),
+        .phy_debug_status  (phy_debug_status),
+        .rx_frame_count    (rx_frame_count),
+        .crc_error_count   (crc_error_count),
+        .format_error_count(format_error_count),
+        .match_count       (match_count),
+        .last_rx_seq       (last_rx_seq),
+        .last_rx_addr      (last_rx_addr),
+        .last_rx_data      (last_rx_data),
+        .board_test_status (board_test_status)
+    );
+
+endmodule
