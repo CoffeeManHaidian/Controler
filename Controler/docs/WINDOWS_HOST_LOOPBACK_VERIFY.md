@@ -35,6 +35,21 @@ xdma_loopback_verify_win.exe
 
 如果探测成功，程序会自动打印实际使用的读写设备。
 
+如果需要先做诊断，也可以运行：
+
+```bat
+xdma_loopback_verify_win.exe scan
+```
+
+它会：
+
+- 扫描常见的 `xdma*_user`
+- 扫描 `xdma*_h2c_*` / `xdma*_c2h_*`
+- 扫描 `xdma*_control`
+- 尝试通过 Windows SetupDi 枚举 XDMA 设备接口
+
+这样可以快速判断当前部署机上驱动究竟暴露了哪些可访问入口。
+
 如果你希望强制指定某个设备，也可以手工传入设备名。
 
 ## 默认设备

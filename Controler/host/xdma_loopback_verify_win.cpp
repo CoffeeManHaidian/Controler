@@ -1,4 +1,5 @@
 #include <windows.h>
+#include <setupapi.h>
 
 #include <chrono>
 #include <cstdint>
@@ -7,6 +8,8 @@
 #include <string>
 #include <thread>
 #include <vector>
+
+#pragma comment(lib, "setupapi.lib")
 
 namespace {
 
@@ -31,6 +34,14 @@ constexpr LONG REG_COMMIT_COUNT       = 0x40;
 constexpr uint32_t CTRL_COMMIT       = 0x00000001u;
 constexpr uint32_t CTRL_CLEAR_STATUS = 0x00000002u;
 constexpr uint32_t CFG_TX_ENABLE     = 0x00000001u;
+
+// Device class GUID captured from the deployed machine's XDMA device.
+constexpr GUID kXdmaClassGuid = {
+    0xa3a4c1ce,
+    0x5a80,
+    0x452c,
+    {0x9b, 0x51, 0xa9, 0x8e, 0xdd, 0x33, 0x78, 0xd1}
+};
 
 struct StatusSnapshot {
     uint32_t status_reg = 0;
@@ -68,29 +79,142 @@ bool can_open_device(const char* path, DWORD access) {
     return true;
 }
 
-DevicePair auto_detect_devices() {
-    std::vector<std::string> user_nodes;
-    std::vector<std::string> control_nodes;
-    std::vector<std::string> h2c_nodes;
-    std::vector<std::string> c2h_nodes;
-
+std::vector<std::string> build_user_nodes() {
+    std::vector<std::string> nodes;
     for (int dev = 0; dev < 8; ++dev) {
         char buf[64];
-
         std::snprintf(buf, sizeof(buf), "\\\\.\\xdma%d_user", dev);
-        user_nodes.emplace_back(buf);
+        nodes.emplace_back(buf);
+    }
+    return nodes;
+}
 
+std::vector<std::string> build_control_nodes() {
+    std::vector<std::string> nodes;
+    for (int dev = 0; dev < 8; ++dev) {
+        char buf[64];
         std::snprintf(buf, sizeof(buf), "\\\\.\\xdma%d_control", dev);
-        control_nodes.emplace_back(buf);
+        nodes.emplace_back(buf);
+    }
+    return nodes;
+}
 
+std::vector<std::string> build_h2c_nodes() {
+    std::vector<std::string> nodes;
+    for (int dev = 0; dev < 8; ++dev) {
         for (int ch = 0; ch < 4; ++ch) {
+            char buf[64];
             std::snprintf(buf, sizeof(buf), "\\\\.\\xdma%d_h2c_%d", dev, ch);
-            h2c_nodes.emplace_back(buf);
-
-            std::snprintf(buf, sizeof(buf), "\\\\.\\xdma%d_c2h_%d", dev, ch);
-            c2h_nodes.emplace_back(buf);
+            nodes.emplace_back(buf);
         }
     }
+    return nodes;
+}
+
+std::vector<std::string> build_c2h_nodes() {
+    std::vector<std::string> nodes;
+    for (int dev = 0; dev < 8; ++dev) {
+        for (int ch = 0; ch < 4; ++ch) {
+            char buf[64];
+            std::snprintf(buf, sizeof(buf), "\\\\.\\xdma%d_c2h_%d", dev, ch);
+            nodes.emplace_back(buf);
+        }
+    }
+    return nodes;
+}
+
+std::vector<std::string> enumerate_setupapi_interfaces() {
+    std::vector<std::string> paths;
+
+    HDEVINFO info = SetupDiGetClassDevsA(&kXdmaClassGuid, nullptr, nullptr,
+                                         DIGCF_PRESENT | DIGCF_DEVICEINTERFACE);
+    if (info == INVALID_HANDLE_VALUE) {
+        return paths;
+    }
+
+    for (DWORD index = 0;; ++index) {
+        SP_DEVICE_INTERFACE_DATA if_data{};
+        if_data.cbSize = sizeof(if_data);
+
+        if (!SetupDiEnumDeviceInterfaces(info, nullptr, &kXdmaClassGuid, index, &if_data)) {
+            break;
+        }
+
+        DWORD required_size = 0;
+        SetupDiGetDeviceInterfaceDetailA(info, &if_data, nullptr, 0, &required_size, nullptr);
+        if (required_size == 0) {
+            continue;
+        }
+
+        auto buffer = std::vector<unsigned char>(required_size, 0);
+        auto* detail = reinterpret_cast<SP_DEVICE_INTERFACE_DETAIL_DATA_A*>(buffer.data());
+        detail->cbSize = sizeof(SP_DEVICE_INTERFACE_DETAIL_DATA_A);
+
+        if (SetupDiGetDeviceInterfaceDetailA(info, &if_data, detail, required_size,
+                                             nullptr, nullptr)) {
+            paths.emplace_back(detail->DevicePath);
+        }
+    }
+
+    SetupDiDestroyDeviceInfoList(info);
+    return paths;
+}
+
+void scan_devices() {
+    std::printf("Scanning common XDMA device nodes...\n\n");
+
+    auto user_nodes = build_user_nodes();
+    auto control_nodes = build_control_nodes();
+    auto h2c_nodes = build_h2c_nodes();
+    auto c2h_nodes = build_c2h_nodes();
+    auto setupapi_nodes = enumerate_setupapi_interfaces();
+
+    bool found = false;
+
+    for (const auto& path : user_nodes) {
+        if (can_open_device(path.c_str(), GENERIC_READ | GENERIC_WRITE)) {
+            std::printf("RW   %s\n", path.c_str());
+            found = true;
+        }
+    }
+
+    for (const auto& path : control_nodes) {
+        if (can_open_device(path.c_str(), GENERIC_READ | GENERIC_WRITE)) {
+            std::printf("RW   %s\n", path.c_str());
+            found = true;
+        }
+    }
+
+    for (const auto& path : h2c_nodes) {
+        if (can_open_device(path.c_str(), GENERIC_WRITE)) {
+            std::printf("W    %s\n", path.c_str());
+            found = true;
+        }
+    }
+
+    for (const auto& path : c2h_nodes) {
+        if (can_open_device(path.c_str(), GENERIC_READ)) {
+            std::printf("R    %s\n", path.c_str());
+            found = true;
+        }
+    }
+
+    for (const auto& path : setupapi_nodes) {
+        std::printf("IF   %s\n", path.c_str());
+        found = true;
+    }
+
+    if (!found) {
+        std::printf("No common XDMA device nodes or SetupDi interfaces were found.\n");
+    }
+}
+
+DevicePair auto_detect_devices() {
+    auto user_nodes = build_user_nodes();
+    auto control_nodes = build_control_nodes();
+    auto h2c_nodes = build_h2c_nodes();
+    auto c2h_nodes = build_c2h_nodes();
+    auto setupapi_nodes = enumerate_setupapi_interfaces();
 
     for (const auto& path : user_nodes) {
         if (can_open_device(path.c_str(), GENERIC_READ | GENERIC_WRITE)) {
@@ -111,6 +235,15 @@ DevicePair auto_detect_devices() {
 
     for (const auto& path : control_nodes) {
         if (can_open_device(path.c_str(), GENERIC_READ | GENERIC_WRITE)) {
+            return {path, path};
+        }
+    }
+
+    for (const auto& path : setupapi_nodes) {
+        if (can_open_device(path.c_str(), GENERIC_READ | GENERIC_WRITE)) {
+            return {path, path};
+        }
+        if (can_open_device(path.c_str(), GENERIC_WRITE) && can_open_device(path.c_str(), GENERIC_READ)) {
             return {path, path};
         }
     }
@@ -347,8 +480,9 @@ void print_usage(const char* exe) {
     std::printf("  %s [device] single <addr_hex> <data_hex> [settle_ms]\n", exe);
     std::printf("  %s [device] burst <base_addr_hex> <base_data_hex> <count> [interval_ms] [settle_ms]\n", exe);
     std::printf("  %s [device] rate <window_ms>\n", exe);
+    std::printf("  %s scan\n", exe);
     std::printf("\n");
-    std::printf("Default device: auto-detect (xdma*_user or xdma*_h2c_*/c2h_* or xdma*_control)\n");
+    std::printf("Default device: auto-detect (xdma*_user / h2c+c2h / control / SetupDi interface)\n");
 }
 
 bool parse_u32(const char* text, uint32_t* value) {
@@ -364,9 +498,14 @@ bool parse_u32(const char* text, uint32_t* value) {
 }  // namespace
 
 int main(int argc, char* argv[]) {
+    int argi = 1;
+    if (argc > 1 && std::strcmp(argv[1], "scan") == 0) {
+        scan_devices();
+        return 0;
+    }
+
     std::string write_device_path = "\\\\.\\xdma0_user";
     std::string read_device_path = "\\\\.\\xdma0_user";
-    int argi = 1;
 
     if (argc > 1 && std::strncmp(argv[1], "\\\\.\\", 4) == 0) {
         write_device_path = argv[1];
@@ -391,6 +530,7 @@ int main(int argc, char* argv[]) {
         std::printf("Failed to open write device: %s, GetLastError=%lu\n",
                     write_device_path.c_str(),
                     GetLastError());
+        std::printf("Tip: run '%s scan' to list common XDMA names and SetupDi interfaces.\n", argv[0]);
         return 1;
     }
 
@@ -405,6 +545,7 @@ int main(int argc, char* argv[]) {
         std::printf("Failed to open read device: %s, GetLastError=%lu\n",
                     read_device_path.c_str(),
                     GetLastError());
+        std::printf("Tip: run '%s scan' to list common XDMA names and SetupDi interfaces.\n", argv[0]);
         CloseHandle(write_dev);
         return 1;
     }

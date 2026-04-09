@@ -88,6 +88,7 @@ set rtl_files [list \
     [file join $rtl_dir "pcie_cmd_to_optical_host_loopback_top.v"] \
     [file join $rtl_dir "pcie_cmd_to_optical_top.v"] \
     [file join $rtl_dir "pcie_cmd_to_optical_hw_bringup_top.v"] \
+    [file join $rtl_dir "pcie_xdma_axil_sfp_loopback_top.v"] \
     [file join $rtl_dir "pcie_xdma_sfp_loopback_top.v"] \
     [file join $rtl_dir "simple_sync_fifo.v"] \
     [file join $rtl_dir "xdma_m_axil_optical_loopback_top.v"] \
