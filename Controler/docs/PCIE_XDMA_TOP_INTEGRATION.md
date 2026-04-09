@@ -68,13 +68,19 @@ pcie_cmd_to_optical_axil_loopback_top
 
 如果当前工程里没有这个 IP，综合时会把它当成缺失模块。
 
-当前 `setup_project.tcl` 已经会自动尝试加入这个参考 `.xci`：
+当前 `setup_project.tcl` 会优先加入仓库内自带的 XDMA `.xci`：
+
+```text
+Controler.srcs/sources_1/ip/xdma_sys_xdma_0_0/xdma_sys_xdma_0_0.xci
+```
+
+如果仓库内没有这份文件，脚本才会回退去尝试加入参考工程中的 `.xci`：
 
 ```text
 D:/FPGA/No.226_pcie_xdma_sys_x8_5g/No.226_pcie_xdma_sys_x8_5g.srcs/sources_1/bd/xdma_sys/ip/xdma_sys_xdma_0_0/xdma_sys_xdma_0_0.xci
 ```
 
-所以只要该参考工程路径存在，当前工程重建后就可以直接识别到这颗 XDMA IP。
+所以在新的仓库版本中，即使部署电脑上没有 `D:/FPGA/...` 参考工程，也可以直接综合 `pcie_xdma_sfp_loopback_top`。
 
 ## 当前桥接处理
 

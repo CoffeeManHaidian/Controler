@@ -67,6 +67,7 @@ set rtl_dir [file join $repo_root "Controler.srcs" "sources_1" "new"]
 set sim_dir [file join $repo_root "Controler.srcs" "sim_1" "new"]
 set constr_dir [file join $repo_root "Controler.srcs" "constrs_1" "new"]
 set ip_dir [file join $repo_root "Controler.srcs" "sources_1" "ip" "gtwizard_0"]
+set local_xdma_xci [file join $repo_root "Controler.srcs" "sources_1" "ip" "xdma_sys_xdma_0_0" "xdma_sys_xdma_0_0.xci"]
 set ref_xdma_xci "D:/FPGA/No.226_pcie_xdma_sys_x8_5g/No.226_pcie_xdma_sys_x8_5g.srcs/sources_1/bd/xdma_sys/ip/xdma_sys_xdma_0_0/xdma_sys_xdma_0_0.xci"
 
 set rtl_files [list \
@@ -111,7 +112,19 @@ set ip_files [list \
 
 add_unique_files "" $rtl_files
 add_unique_files "" $ip_files
-set xdma_ip_added [add_optional_file "" $ref_xdma_xci]
+set xdma_ip_source ""
+set xdma_ip_added 0
+if {[file exists $local_xdma_xci]} {
+    set xdma_ip_added [add_optional_file "" $local_xdma_xci]
+    if {$xdma_ip_added} {
+        set xdma_ip_source "repository"
+    }
+} elseif {[file exists $ref_xdma_xci]} {
+    set xdma_ip_added [add_optional_file "" $ref_xdma_xci]
+    if {$xdma_ip_added} {
+        set xdma_ip_source "reference project"
+    }
+}
 add_unique_files "sim_1" $sim_files
 add_unique_files "constrs_1" $constr_files
 
@@ -140,12 +153,12 @@ puts "Top module  : $synth_top"
 puts "Sim top     : $sim_top"
 if {$xdma_ip_added} {
     if {[llength $xdma_ips] > 0} {
-        puts "XDMA IP     : added from reference project and recognized as [join $xdma_ips {, }]"
+        puts "XDMA IP     : added from $xdma_ip_source and recognized as [join $xdma_ips {, }]"
     } else {
-        puts "XDMA IP     : xci added from reference project, but get_ips did not enumerate it in this session"
+        puts "XDMA IP     : xci added from $xdma_ip_source, but get_ips did not enumerate it in this session"
     }
 } else {
-    puts "XDMA IP     : reference xci not found, PCIe XDMA top will remain unavailable until added"
+    puts "XDMA IP     : no local or reference xci found, PCIe XDMA top will remain unavailable until added"
 }
 puts "Constraints : bring-up and PCIe/XDMA top XDCs added with guarded get_ports/get_cells"
 puts ""
