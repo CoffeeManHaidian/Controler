@@ -3,7 +3,7 @@ set project_name "Controler"
 set project_dir [file join $repo_root "build" "vivado" $project_name]
 set project_xpr [file join $project_dir "${project_name}.xpr"]
 set part_name "xc7k325tffg900-2"
-set synth_top "pcie_xdma_sfp_loopback_top"
+set synth_top "pcie_xdma_axil_sfp_loopback_top"
 set sim_top "tb_host_register_loopback"
 
 proc ensure_file_exists {path_value} {
@@ -168,4 +168,4 @@ puts "  1. Run Synthesis"
 puts "  2. Run Implementation"
 puts "  3. Generate Bitstream"
 puts "  4. If ILA is needed, open synthesized design and run Set Up Debug"
-puts "  5. If you want the standalone bring-up path instead, switch top and manually replace the XDC with pcie_cmd_to_optical_board_top.xdc"
+puts "  5. If you want the standalone bring-up path instead, switch top to pcie_cmd_to_optical_hw_bringup_top and manually replace the XDC with pcie_cmd_to_optical_board_top.xdc"
