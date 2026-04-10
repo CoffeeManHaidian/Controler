@@ -20,6 +20,7 @@ module pcie_cmd_to_optical_gtx_top (
     output wire        optical_tx_valid_dbg,
     output wire        optical_tx_last_dbg,
     output wire        optical_tx_ready_dbg,
+    input  wire        gtx_tx_ready,
 
     output wire [31:0] gtx_tx_data,
     output wire        gtx_tx_valid,
@@ -39,6 +40,10 @@ module pcie_cmd_to_optical_gtx_top (
     input  wire [31:0] last_rx_addr,
     input  wire [31:0] last_rx_data,
     input  wire [31:0] board_test_status,
+    input  wire [31:0] decode_status,
+    output wire        cmd_bram_rd_en,
+    output wire [7:0]  cmd_bram_rd_addr,
+    input  wire [63:0] cmd_bram_rd_data,
     output wire        clear_status_pulse
 );
 
@@ -76,6 +81,10 @@ module pcie_cmd_to_optical_gtx_top (
         .last_rx_addr     (last_rx_addr),
         .last_rx_data     (last_rx_data),
         .board_test_status(board_test_status),
+        .decode_status    (decode_status),
+        .cmd_bram_rd_en   (cmd_bram_rd_en),
+        .cmd_bram_rd_addr (cmd_bram_rd_addr),
+        .cmd_bram_rd_data (cmd_bram_rd_data),
         .status_reg       (status_reg),
         .tx_frame_count   (tx_frame_count),
         .optical_status   (optical_status),
@@ -90,6 +99,7 @@ module pcie_cmd_to_optical_gtx_top (
         .s_axis_tvalid    (optical_tx_valid),
         .s_axis_tlast     (optical_tx_last),
         .s_axis_tready    (optical_tx_ready),
+        .gtx_tx_ready     (gtx_tx_ready),
         .gtx_tx_data      (gtx_tx_data),
         .gtx_tx_valid     (gtx_tx_valid),
         .gtx_tx_last      (gtx_tx_last),

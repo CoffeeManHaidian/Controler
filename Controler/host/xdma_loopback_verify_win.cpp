@@ -30,6 +30,9 @@ constexpr LONG REG_OPTICAL_STATUS     = 0x34;
 constexpr LONG REG_PHY_DEBUG_STATUS   = 0x38;
 constexpr LONG REG_BOARD_TEST_STATUS  = 0x3C;
 constexpr LONG REG_COMMIT_COUNT       = 0x40;
+constexpr LONG REG_DECODE_STATUS      = 0x44;
+constexpr LONG REG_CMD_COUNT          = 0x48;
+constexpr LONG BRAM_CMD_BASE          = 0x1000;
 
 constexpr uint32_t CTRL_COMMIT       = 0x00000001u;
 constexpr uint32_t CTRL_CLEAR_STATUS = 0x00000002u;
@@ -57,8 +60,8 @@ struct StatusSnapshot {
     uint32_t phy_debug_status = 0;
     uint32_t board_test_status = 0;
     uint32_t commit_count = 0;
+    uint32_t decode_status = 0;
 };
-
 struct DevicePair {
     std::string write_path;
     std::string read_path;
@@ -296,7 +299,8 @@ bool read_snapshot(HANDLE dev, StatusSnapshot* snap) {
            reg_read32(dev, REG_OPTICAL_STATUS, &snap->optical_status) &&
            reg_read32(dev, REG_PHY_DEBUG_STATUS, &snap->phy_debug_status) &&
            reg_read32(dev, REG_BOARD_TEST_STATUS, &snap->board_test_status) &&
-           reg_read32(dev, REG_COMMIT_COUNT, &snap->commit_count);
+           reg_read32(dev, REG_COMMIT_COUNT, &snap->commit_count) &&
+           reg_read32(dev, REG_DECODE_STATUS, &snap->decode_status);
 }
 
 void dump_snapshot(const StatusSnapshot& snap, const char* title) {
@@ -309,11 +313,18 @@ void dump_snapshot(const StatusSnapshot& snap, const char* title) {
     std::printf("FORMAT_ERROR_COUNT : %u\n", snap.format_error_count);
     std::printf("LAST_RX_SEQ        : %u\n", snap.last_rx_seq);
     std::printf("LAST_RX_ADDR       : 0x%08x\n", snap.last_rx_addr);
+    std::printf("PHY_DEBUG_STATUS   : 0x%08x\n", snap.phy_debug_status);
     std::printf("LAST_RX_DATA       : 0x%08x\n", snap.last_rx_data);
     std::printf("OPTICAL_STATUS     : 0x%08x\n", snap.optical_status);
-    std::printf("PHY_DEBUG_STATUS   : 0x%08x\n", snap.phy_debug_status);
     std::printf("BOARD_TEST_STATUS  : 0x%08x\n", snap.board_test_status);
     std::printf("COMMIT_COUNT       : %u\n", snap.commit_count);
+    std::printf("DECODE_STATUS      : 0x%08x\n", snap.decode_status);
+    std::printf("  decode_seen      : %u\n", (snap.decode_status >> 0) & 0x1u);
+    std::printf("  crc_ok           : %u\n", (snap.decode_status >> 1) & 0x1u);
+    std::printf("  format_ok        : %u\n", (snap.decode_status >> 2) & 0x1u);
+    std::printf("  match_ok         : %u\n", (snap.decode_status >> 3) & 0x1u);
+    std::printf("  format_error     : %u\n", (snap.decode_status >> 4) & 0x1u);
+    std::printf("  crc_error        : %u\n", (snap.decode_status >> 5) & 0x1u);
 }
 
 bool clear_status(HANDLE write_dev) {
@@ -324,9 +335,15 @@ bool enable_tx(HANDLE write_dev) {
     return reg_write32(write_dev, REG_CMD_CFG, CFG_TX_ENABLE);
 }
 
+bool write_command_word(HANDLE write_dev, uint32_t index, uint32_t addr, uint32_t data) {
+    const LONG word_base = BRAM_CMD_BASE + static_cast<LONG>(index * 8u);
+    return reg_write32(write_dev, word_base + 0x0, data) &&
+           reg_write32(write_dev, word_base + 0x4, addr);
+}
+
 bool send_one(HANDLE write_dev, uint32_t addr, uint32_t data) {
-    return reg_write32(write_dev, REG_CMD_ADDR, addr) &&
-           reg_write32(write_dev, REG_CMD_DATA, data) &&
+    return write_command_word(write_dev, 0u, addr, data) &&
+           reg_write32(write_dev, REG_CMD_COUNT, 1u) &&
            reg_write32(write_dev, REG_CMD_CTRL, CTRL_COMMIT);
 }
 
@@ -377,14 +394,24 @@ bool run_burst(HANDLE write_dev,
     for (uint32_t i = 0; i < count; ++i) {
         const uint32_t addr = base_addr + (i * 4u);
         const uint32_t data = base_data + i;
-        if (!send_one(write_dev, addr, data)) {
-            std::printf("Failed at burst frame %u, GetLastError=%lu\n", i, GetLastError());
+        if (!write_command_word(write_dev, i, addr, data)) {
+            std::printf("Failed while writing BRAM command %u, GetLastError=%lu\n", i, GetLastError());
             return false;
         }
+    }
 
-        if (interval_ms != 0) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(interval_ms));
-        }
+    if (!reg_write32(write_dev, REG_CMD_COUNT, count)) {
+        std::printf("Failed to write CMD_COUNT, GetLastError=%lu\n", GetLastError());
+        return false;
+    }
+
+    if (!reg_write32(write_dev, REG_CMD_CTRL, CTRL_COMMIT)) {
+        std::printf("Failed to commit BRAM command burst, GetLastError=%lu\n", GetLastError());
+        return false;
+    }
+
+    if (interval_ms != 0) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(interval_ms * count));
     }
 
     if (settle_ms != 0) {
@@ -637,3 +664,6 @@ int main(int argc, char* argv[]) {
     CloseHandle(write_dev);
     return 1;
 }
+
+
+

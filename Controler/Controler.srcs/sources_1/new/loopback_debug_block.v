@@ -6,6 +6,7 @@ module loopback_debug_block (
     input  wire [31:0] phy_rx_data,
     input  wire        phy_rx_data_valid,
 
+    output wire [31:0] decode_status,
     output wire [31:0] rx_frame_count,
     output wire [31:0] crc_error_count,
     output wire [31:0] format_error_count,
@@ -69,6 +70,7 @@ module loopback_debug_block (
         .rx_seq            (rx_seq),
         .rx_addr           (rx_addr),
         .rx_cmd_data       (rx_cmd_data),
+        .decode_status     (decode_status),
         .match_count       (match_count),
         .crc_error_count   (crc_error_count),
         .format_error_count(format_error_count),

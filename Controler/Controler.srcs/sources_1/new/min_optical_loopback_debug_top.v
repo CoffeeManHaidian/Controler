@@ -42,6 +42,7 @@ module min_optical_loopback_debug_top (
         .optical_tx_valid_dbg(optical_tx_valid),
         .optical_tx_last_dbg (optical_tx_last),
         .optical_tx_ready_dbg(),
+        .gtx_tx_ready        (1'b1),
         .gtx_tx_data         (gtx_tx_data),
         .gtx_tx_valid        (gtx_tx_valid),
         .gtx_tx_last         (gtx_tx_last),

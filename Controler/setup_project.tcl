@@ -72,10 +72,15 @@ set ref_xdma_xci "D:/FPGA/No.226_pcie_xdma_sys_x8_5g/No.226_pcie_xdma_sys_x8_5g.
 
 set rtl_files [list \
     [file join $rtl_dir "axi_mm_to_axil_bridge.v"] \
+    [file join $rtl_dir "axil_bram_ctrl_simple.v"] \
+    [file join $rtl_dir "axil_interconnect_1x2.v"] \
     [file join $rtl_dir "axil_to_host_regs.v"] \
     [file join $rtl_dir "async_gtx_word_fifo.v"] \
+    [file join $rtl_dir "cmd_bram_queue.v"] \
+    [file join $rtl_dir "cmd_bram_dual_port.v"] \
     [file join $rtl_dir "custom_gtx_phy_gtwizard0.v"] \
     [file join $rtl_dir "custom_optical_tx.v"] \
+    [file join $rtl_dir "custom_optical_tx_bram.v"] \
     [file join $rtl_dir "gtx_rx32_to_stream64.v"] \
     [file join $rtl_dir "loopback_checker.v"] \
     [file join $rtl_dir "loopback_debug_block.v"] \

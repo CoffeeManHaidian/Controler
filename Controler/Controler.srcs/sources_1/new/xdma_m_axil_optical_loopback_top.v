@@ -50,7 +50,8 @@ module xdma_m_axil_optical_loopback_top #(
     output wire [31:0] last_rx_seq,
     output wire [31:0] last_rx_addr,
     output wire [31:0] last_rx_data,
-    output wire [31:0] board_test_status
+    output wire [31:0] board_test_status,
+    output wire [31:0] decode_status
 );
 
     pcie_cmd_to_optical_axil_loopback_top #(
@@ -98,7 +99,8 @@ module xdma_m_axil_optical_loopback_top #(
         .last_rx_seq       (last_rx_seq),
         .last_rx_addr      (last_rx_addr),
         .last_rx_data      (last_rx_data),
-        .board_test_status (board_test_status)
+        .board_test_status (board_test_status),
+        .decode_status     (decode_status)
     );
 
 endmodule

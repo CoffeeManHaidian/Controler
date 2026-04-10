@@ -2,12 +2,15 @@
 
 ## 路径说明
 
-当前工程在原有发送/回环链路基础上，补齐了可读写寄存器路径：
+当前工程已经把原先的命令 FIFO 改成了 BRAM 路径：
 
-`上位机写寄存器 -> 命令寄存器 -> 命令 FIFO -> 光口发送 -> 光纤回环 -> GTX 接收 -> 解包校验 -> 状态寄存器 -> 上位机读回`
+`上位机/XDMA -> AXI Interconnect -> AXI BRAM Controller -> 命令 BRAM -> 光口发送 -> 光纤回环 -> GTX 接收 -> 解包校验 -> 状态寄存器 -> 上位机读回`
 
 其中主控模块为：
 
+- `axil_interconnect_1x2`
+- `axil_bram_ctrl_simple`
+- `cmd_bram_dual_port`
 - `axil_to_host_regs`
 - `pcie_bar_cmd_rx`
 - `pcie_cmd_to_optical_top`
@@ -36,20 +39,11 @@
 - `axil_to_host_regs`
 - `pcie_cmd_to_optical_axil_loopback_top`
 
-其中 `pcie_cmd_to_optical_axil_loopback_top` 直接暴露标准 32-bit AXI-Lite 从接口：
+其中 `pcie_cmd_to_optical_axil_loopback_top` 现在已经整理成：
 
-- `s_axil_awaddr/awprot/awvalid/awready`
-- `s_axil_wdata/wstrb/wvalid/wready`
-- `s_axil_bresp/bvalid/bready`
-- `s_axil_araddr/arprot/arvalid/arready`
-- `s_axil_rdata/rresp/rvalid/rready`
-
-这层的目的不是替代 XDMA，而是把当前工程先整理成可以直接挂到 XDMA `M_AXI_LITE` 的结构。
-
-注意：
-
-- 目前这版适配层默认将 `s_axil_aclk` 同时作为内部控制时钟
-- 后续如果 XDMA 实际控制时钟与板级发送控制时钟不同，建议在 XDMA 接入时再加 AXI Clock Converter 或 CDC 处理
+- 一个 AXI-Lite 控制寄存器从设备
+- 一个 AXI-Lite BRAM 控制从设备
+- 中间通过 `axil_interconnect_1x2` 做地址分流
 
 ## 寄存器映射
 
@@ -57,11 +51,11 @@
 
 - `0x0000_0000`
   - `CMD_ADDR`
-  - 写入待发送的业务地址
+  - 兼容保留寄存器，当前主路径不再依赖它触发发送
 
 - `0x0000_0004`
   - `CMD_DATA`
-  - 写入待发送的业务数据
+  - 兼容保留寄存器，当前主路径不再依赖它触发发送
 
 - `0x0000_0008`
   - `CMD_CTRL`
@@ -72,6 +66,18 @@
   - `CMD_CFG`
   - `bit0 = tx_enable`
   - `bit9:8 = test_mode`
+
+- `0x0000_0048`
+  - `CMD_COUNT`
+  - 一次提交时要从命令 BRAM 中读取并发送的命令条数
+
+### 命令 BRAM 区
+
+- `0x0000_1000 + N * 8 + 0x0`
+  - 第 `N` 条命令的 `CMD_DATA`
+
+- `0x0000_1000 + N * 8 + 0x4`
+  - 第 `N` 条命令的 `CMD_ADDR`
 
 ### 可读寄存器
 
@@ -127,6 +133,18 @@
 - `0x0000_0040`
   - `COMMIT_COUNT`
 
+- `0x0000_0044`
+  - `DECODE_STATUS`
+  - `bit0 = decode_seen`
+  - `bit1 = crc_ok`
+  - `bit2 = format_ok`
+  - `bit3 = match_ok`
+  - `bit4 = format_error`
+  - `bit5 = crc_error`
+
+- `0x0000_0048`
+  - `CMD_COUNT`
+
 ## 推荐主机测试流程
 
 ### 发送一帧
@@ -134,11 +152,12 @@
 1. 写 `0x0000_000C = 0x0000_0001`
    - 使能 `tx_enable`
 
-2. 写 `0x0000_0000 = <addr>`
-   - 设置业务地址
+2. 写命令 BRAM：
+   - `0x0000_1000 = <data0>`
+   - `0x0000_1004 = <addr0>`
 
-3. 写 `0x0000_0004 = <data>`
-   - 设置业务数据
+3. 写 `0x0000_0048 = 0x0000_0001`
+   - 表示本次从 BRAM 读取 1 条命令
 
 4. 写 `0x0000_0008 = 0x0000_0001`
    - 触发一次发送
@@ -160,6 +179,7 @@
 - `0x0000_0024`
 - `0x0000_002C`
 - `0x0000_0030`
+- `0x0000_0044`
 
 成功判据：
 
@@ -170,6 +190,7 @@
 - `FORMAT_ERROR_COUNT = 0`
 - `LAST_RX_ADDR == 写入地址`
 - `LAST_RX_DATA == 写入数据`
+- `DECODE_STATUS.bit3 == 1`（最近一帧解包且匹配成功）
 
 ## 现有顶层的使用建议
 
@@ -181,5 +202,8 @@
 
 - AXI-Lite 控制路径：
   - `pcie_cmd_to_optical_axil_loopback_top`
+
+- PCIe/XDMA + AXI-Lite + BRAM 路径：
+  - `pcie_xdma_axil_sfp_loopback_top`
 
 前者适合快速 bring-up，后者适合接回上位机做完整闭环验证。

@@ -12,44 +12,72 @@ module async_gtx_word_fifo (
     output wire        empty
 );
 
-    wire overflow_unused;
-    wire underflow_unused;
-    wire wr_rst_busy_unused;
-    wire rd_rst_busy_unused;
+    // This module keeps the legacy name to minimize integration churn, but it
+    // is no longer a FIFO. It is a single-word async mailbox with request/ack
+    // handshakes across the two clock domains.
 
-    xpm_fifo_async #(
-        .CDC_SYNC_STAGES      (2),
-        .DOUT_RESET_VALUE     ("0"),
-        .ECC_MODE             ("no_ecc"),
-        .FIFO_MEMORY_TYPE     ("auto"),
-        .FIFO_READ_LATENCY    (0),
-        .FIFO_WRITE_DEPTH     (16),
-        .FULL_RESET_VALUE     (0),
-        .PROG_EMPTY_THRESH    (10),
-        .PROG_FULL_THRESH     (10),
-        .RD_DATA_COUNT_WIDTH  (1),
-        .READ_DATA_WIDTH      (35),
-        .READ_MODE            ("fwft"),
-        .RELATED_CLOCKS       (0),
-        .USE_ADV_FEATURES     ("0000"),
-        .WAKEUP_TIME          (0),
-        .WRITE_DATA_WIDTH     (35),
-        .WR_DATA_COUNT_WIDTH  (1)
-    ) u_xpm_fifo_async (
-        .sleep        (1'b0),
-        .rst          (rst),
-        .wr_clk       (wr_clk),
-        .wr_en        (wr_en),
-        .din          (din),
-        .full         (full),
-        .overflow     (overflow_unused),
-        .wr_rst_busy  (wr_rst_busy_unused),
-        .rd_clk       (rd_clk),
-        .rd_en        (rd_en),
-        .dout         (dout),
-        .empty        (empty),
-        .underflow    (underflow_unused),
-        .rd_rst_busy  (rd_rst_busy_unused)
-    );
+    reg [34:0] wr_payload = 35'd0;
+    reg        req_toggle = 1'b0;
+    reg        ack_toggle_wr_meta = 1'b0;
+    reg        ack_toggle_wr_sync = 1'b0;
+
+    reg        req_toggle_rd_meta = 1'b0;
+    reg        req_toggle_rd_sync = 1'b0;
+    reg [34:0] payload_rd_meta = 35'd0;
+    reg [34:0] payload_rd_sync = 35'd0;
+    reg [34:0] rd_payload = 35'd0;
+    reg        rd_valid = 1'b0;
+    reg        ack_toggle = 1'b0;
+
+    wire busy_wr;
+    wire pending_rd;
+
+    assign busy_wr   = (req_toggle != ack_toggle_wr_sync);
+    assign full      = busy_wr;
+    assign pending_rd = (req_toggle_rd_sync != ack_toggle);
+    assign empty     = ~rd_valid;
+    assign dout      = rd_payload;
+
+    always @(posedge wr_clk) begin
+        if (rst) begin
+            wr_payload        <= 35'd0;
+            req_toggle        <= 1'b0;
+            ack_toggle_wr_meta<= 1'b0;
+            ack_toggle_wr_sync<= 1'b0;
+        end else begin
+            ack_toggle_wr_meta <= ack_toggle;
+            ack_toggle_wr_sync <= ack_toggle_wr_meta;
+
+            if (wr_en && !busy_wr) begin
+                wr_payload <= din;
+                req_toggle <= ~req_toggle;
+            end
+        end
+    end
+
+    always @(posedge rd_clk) begin
+        if (rst) begin
+            req_toggle_rd_meta <= 1'b0;
+            req_toggle_rd_sync <= 1'b0;
+            payload_rd_meta    <= 35'd0;
+            payload_rd_sync    <= 35'd0;
+            rd_payload         <= 35'd0;
+            rd_valid           <= 1'b0;
+            ack_toggle         <= 1'b0;
+        end else begin
+            req_toggle_rd_meta <= req_toggle;
+            req_toggle_rd_sync <= req_toggle_rd_meta;
+            payload_rd_meta    <= wr_payload;
+            payload_rd_sync    <= payload_rd_meta;
+
+            if (!rd_valid && pending_rd) begin
+                rd_payload <= payload_rd_sync;
+                rd_valid   <= 1'b1;
+            end else if (rd_valid && rd_en) begin
+                rd_valid   <= 1'b0;
+                ack_toggle <= req_toggle_rd_sync;
+            end
+        end
+    end
 
 endmodule

@@ -32,7 +32,11 @@ module pcie_cmd_to_optical_host_loopback_top #(
     output wire [31:0] last_rx_seq,
     output wire [31:0] last_rx_addr,
     output wire [31:0] last_rx_data,
-    output wire [31:0] board_test_status
+    output wire [31:0] board_test_status,
+    output wire [31:0] decode_status,
+    input  wire [63:0] cmd_bram_rd_data,
+    output wire        cmd_bram_rd_en,
+    output wire [7:0]  cmd_bram_rd_addr
 );
 
     pcie_cmd_to_optical_board_top #(
@@ -67,7 +71,11 @@ module pcie_cmd_to_optical_host_loopback_top #(
         .last_rx_seq       (last_rx_seq),
         .last_rx_addr      (last_rx_addr),
         .last_rx_data      (last_rx_data),
-        .board_test_status (board_test_status)
+        .board_test_status (board_test_status),
+        .decode_status     (decode_status),
+        .cmd_bram_rd_data  (cmd_bram_rd_data),
+        .cmd_bram_rd_en    (cmd_bram_rd_en),
+        .cmd_bram_rd_addr  (cmd_bram_rd_addr)
     );
 
 endmodule

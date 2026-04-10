@@ -32,7 +32,11 @@ module pcie_cmd_to_optical_board_top #(
     output wire [31:0] last_rx_seq,
     output wire [31:0] last_rx_addr,
     output wire [31:0] last_rx_data,
-    output wire [31:0] board_test_status
+    output wire [31:0] board_test_status,
+    output wire [31:0] decode_status,
+    input  wire [63:0] cmd_bram_rd_data,
+    output wire        cmd_bram_rd_en,
+    output wire [7:0]  cmd_bram_rd_addr
 );
 
     wire [63:0] optical_tx_data_dbg;
@@ -70,6 +74,7 @@ module pcie_cmd_to_optical_board_top #(
     wire [31:0] last_rx_seq_dbg;
     wire [31:0] last_rx_addr_dbg;
     wire [31:0] last_rx_data_dbg;
+    wire [31:0] decode_status_dbg;
     wire        clear_status_pulse_sys;
     reg  [2:0]  clear_status_sync = 3'd0;
     wire        clear_status_pulse_rx;
@@ -93,6 +98,7 @@ module pcie_cmd_to_optical_board_top #(
         .optical_tx_valid_dbg(optical_tx_valid_dbg),
         .optical_tx_last_dbg (optical_tx_last_dbg),
         .optical_tx_ready_dbg(optical_tx_ready_dbg),
+        .gtx_tx_ready        (~tx_fifo_full),
         .gtx_tx_data         (gtx_tx_data),
         .gtx_tx_valid        (gtx_tx_valid),
         .gtx_tx_last         (gtx_tx_last),
@@ -110,6 +116,10 @@ module pcie_cmd_to_optical_board_top #(
         .last_rx_addr        (last_rx_addr),
         .last_rx_data        (last_rx_data),
         .board_test_status   (board_test_status),
+        .decode_status       (decode_status),
+        .cmd_bram_rd_en      (cmd_bram_rd_en),
+        .cmd_bram_rd_addr    (cmd_bram_rd_addr),
+        .cmd_bram_rd_data    (cmd_bram_rd_data),
         .clear_status_pulse  (clear_status_pulse_sys)
     );
 
@@ -182,7 +192,8 @@ module pcie_cmd_to_optical_board_top #(
                 .match_count       (match_count_dbg),
                 .last_rx_seq       (last_rx_seq_dbg),
                 .last_rx_addr      (last_rx_addr_dbg),
-                .last_rx_data      (last_rx_data_dbg)
+                .last_rx_data      (last_rx_data_dbg),
+                .decode_status     (decode_status_dbg)
             );
         end
     endgenerate
@@ -194,6 +205,7 @@ module pcie_cmd_to_optical_board_top #(
     assign last_rx_seq       = ENABLE_LOOPBACK_DEBUG ? last_rx_seq_dbg       : 32'd0;
     assign last_rx_addr      = ENABLE_LOOPBACK_DEBUG ? last_rx_addr_dbg      : 32'd0;
     assign last_rx_data      = ENABLE_LOOPBACK_DEBUG ? last_rx_data_dbg      : 32'd0;
+    assign decode_status     = ENABLE_LOOPBACK_DEBUG ? decode_status_dbg     : 32'd0;
 
     assign board_test_status = {
         ENABLE_LOOPBACK_DEBUG,

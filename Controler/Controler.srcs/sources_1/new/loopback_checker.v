@@ -10,6 +10,7 @@ module loopback_checker (
     input  wire [31:0] rx_addr,
     input  wire [31:0] rx_cmd_data,
 
+    output reg  [31:0] decode_status,
     output reg  [31:0] match_count,
     output reg  [31:0] crc_error_count,
     output reg  [31:0] format_error_count,
@@ -20,6 +21,7 @@ module loopback_checker (
 
     always @(posedge clk) begin
         if (rst || clear_counters) begin
+            decode_status       <= 32'd0;
             match_count        <= 32'd0;
             crc_error_count    <= 32'd0;
             format_error_count <= 32'd0;
@@ -27,6 +29,13 @@ module loopback_checker (
             last_rx_addr       <= 32'd0;
             last_rx_data       <= 32'd0;
         end else if (cmd_valid) begin
+            decode_status[0] <= 1'b1;
+            decode_status[1] <= crc_ok;
+            decode_status[2] <= format_ok;
+            decode_status[3] <= format_ok && crc_ok;
+            decode_status[4] <= !format_ok;
+            decode_status[5] <= format_ok && !crc_ok;
+            decode_status[31:6] <= 26'd0;
             last_rx_seq  <= rx_seq;
             last_rx_addr <= rx_addr;
             last_rx_data <= rx_cmd_data;

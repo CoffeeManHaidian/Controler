@@ -4,7 +4,7 @@
 
 - `host/xdma_loopback_verify_win.cpp`
 
-这个程序通过 XDMA 用户 BAR 设备直接读写当前工程中的控制/状态寄存器，用来完成：
+这个程序通过 XDMA 用户 BAR 设备直接读写当前工程中的控制/状态寄存器与命令 BRAM，用来完成：
 
 - 默认循环发送验证
 - 单次发送验证
@@ -48,26 +48,6 @@ xdma_loopback_verify_win.exe scan
 - 扫描 `xdma*_control`
 - 尝试通过 Windows SetupDi 枚举 XDMA 设备接口
 
-这样可以快速判断当前部署机上驱动究竟暴露了哪些可访问入口。
-
-如果你希望强制指定某个设备，也可以手工传入设备名。
-
-## 默认设备
-
-优先按下面顺序自动探测：
-
-1. `\\.\xdma*_user`
-2. `\\.\xdma*_h2c_*` + `\\.\xdma*_c2h_*`
-3. `\\.\xdma*_control`
-
-如果你的设备名需要手工指定，可以把设备路径作为第一个参数传入。
-
-例如：
-
-```bat
-xdma_loopback_verify_win.exe \\.\xdma1_user
-```
-
 ## 寄存器映射
 
 - `0x00` `CMD_ADDR`
@@ -89,6 +69,29 @@ xdma_loopback_verify_win.exe \\.\xdma1_user
 - `0x38` `PHY_DEBUG_STATUS`
 - `0x3C` `BOARD_TEST_STATUS`
 - `0x40` `COMMIT_COUNT`
+- `0x44` `DECODE_STATUS`
+- `0x48` `CMD_COUNT`
+
+## 命令 BRAM 映射
+
+当前工程的发送路径已经切换为：
+
+`XDMA -> AXI Interconnect -> AXI BRAM Controller -> BRAM -> custom_optical_tx_bram`
+
+主机把命令写入 BRAM 命令区，再通过 `CMD_COUNT + COMMIT` 触发一次批量发送。
+
+命令 BRAM 基地址：
+
+- `0x1000`
+
+每条命令占 `8 Byte`：
+
+- `+0x0`：`CMD_DATA`
+- `+0x4`：`CMD_ADDR`
+
+第 `N` 条命令的基地址为：
+
+- `0x1000 + N * 8`
 
 ## 用法
 
@@ -104,14 +107,15 @@ xdma_loopback_verify_win.exe
 
 1. 打开发送使能
 2. 清零统计
-3. 连续发送 100 帧：
+3. 把 100 条命令写入 BRAM：
    - 起始 `addr = 0x00001000`
    - 起始 `data = 0xA5A50000`
    - 每帧 `addr += 4`
    - 每帧 `data += 1`
-   - 帧间隔 `2 ms`
-4. 读取并打印发送前后状态寄存器
-5. 再做一次 1 秒窗口的频率测量
+4. 写 `CMD_COUNT = 100`
+5. 写 `COMMIT`
+6. 读取并打印发送前后状态寄存器
+7. 再做一次 1 秒窗口的频率测量
 
 ### 2. 指定单次发送内容
 
@@ -136,10 +140,10 @@ xdma_loopback_verify_win.exe burst 0x1000 0xA5A50000 100 2 50
 - 第 1 个：起始地址
 - 第 2 个：起始数据
 - 第 3 个：发送帧数
-- 第 4 个：每帧间隔毫秒数，可选，默认 `0`
+- 第 4 个：每帧等效间隔毫秒数，可选，默认 `0`
 - 第 5 个：最后一帧后等待回环稳定的毫秒数，可选，默认 `50`
 
-这一模式下程序会按下面方式递增：
+这一模式下程序会按下面方式写入 BRAM 并递增：
 
 - `addr += 4`
 - `data += 1`
@@ -186,10 +190,11 @@ xdma_loopback_verify_win.exe rate 1000
 
 ## 说明
 
-如果程序能正常打开 `\\.\xdma0_user`，但计数器不增长，优先检查：
+如果程序能正常打开 XDMA 设备，但计数器不增长，优先检查：
 
 1. PCIe 设备是否正常枚举
 2. SFP 回环光纤是否接好
 3. `tx_enable` 是否已置位
-4. `commit` 是否真的写成功
-5. `SFP_LOS` / `SFP_TXFAULT` 状态是否异常
+4. `CMD_COUNT` 是否正确写入
+5. `COMMIT` 是否真的写成功
+6. `SFP_LOS` / `SFP_TXFAULT` 状态是否异常

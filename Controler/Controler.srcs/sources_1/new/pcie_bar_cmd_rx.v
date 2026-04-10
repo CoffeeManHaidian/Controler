@@ -13,6 +13,8 @@ module pcie_bar_cmd_rx (
     output reg         tx_enable,
     output reg  [1:0]  test_mode,
     output reg         clear_status_pulse,
+    output reg         tx_start_pulse,
+    output reg  [15:0] cmd_bram_count,
     output wire [31:0] status_reg,
     input  wire        fifo_empty,
     input  wire [31:0] tx_frame_count,
@@ -25,7 +27,8 @@ module pcie_bar_cmd_rx (
     input  wire [31:0] last_rx_data,
     input  wire [31:0] optical_status,
     input  wire [31:0] phy_debug_status,
-    input  wire [31:0] board_test_status
+    input  wire [31:0] board_test_status,
+    input  wire [31:0] decode_status
 );
 
     localparam ADDR_CMD_ADDR   = 32'h0000_0000;
@@ -45,6 +48,8 @@ module pcie_bar_cmd_rx (
     localparam ADDR_PHY_STATUS = 32'h0000_0038;
     localparam ADDR_BOARD_STAT = 32'h0000_003C;
     localparam ADDR_COMMIT_CNT = 32'h0000_0040;
+    localparam ADDR_DECODE_STAT= 32'h0000_0044;
+    localparam ADDR_CMD_COUNT  = 32'h0000_0048;
 
     reg [31:0] cmd_addr_reg;
     reg [31:0] cmd_data_reg;
@@ -69,9 +74,12 @@ module pcie_bar_cmd_rx (
             tx_enable    <= 1'b0;
             test_mode    <= 2'd0;
             clear_status_pulse <= 1'b0;
+            tx_start_pulse <= 1'b0;
+            cmd_bram_count <= 16'd0;
         end else begin
             fifo_wr_en          <= 1'b0;
             clear_status_pulse  <= 1'b0;
+            tx_start_pulse      <= 1'b0;
 
             if (wr_en && (wr_addr == ADDR_CMD_ADDR)) begin
                 cmd_addr_reg <= wr_data;
@@ -86,15 +94,18 @@ module pcie_bar_cmd_rx (
                 test_mode <= wr_data[9:8];
             end
 
+            if (wr_en && (wr_addr == ADDR_CMD_COUNT)) begin
+                cmd_bram_count <= wr_data[15:0];
+            end
+
             if (wr_en && (wr_addr == ADDR_CMD_CTRL)) begin
                 if (wr_data[1]) begin
                     clear_status_pulse <= 1'b1;
                     commit_count       <= 32'd0;
                 end
 
-                if (wr_data[0] && tx_enable && !fifo_full) begin
-                    fifo_wr_en   <= 1'b1;
-                    fifo_wr_data <= {cmd_addr_reg, cmd_data_reg};
+                if (wr_data[0] && tx_enable) begin
+                    tx_start_pulse <= 1'b1;
                     commit_count <= commit_count + 1'b1;
                 end
             end
@@ -123,6 +134,8 @@ module pcie_bar_cmd_rx (
                 ADDR_PHY_STATUS: rd_data = phy_debug_status;
                 ADDR_BOARD_STAT: rd_data = board_test_status;
                 ADDR_COMMIT_CNT: rd_data = commit_count;
+                ADDR_DECODE_STAT:rd_data = decode_status;
+                ADDR_CMD_COUNT:  rd_data = {16'd0, cmd_bram_count};
                 default:         rd_data = 32'd0;
             endcase
         end

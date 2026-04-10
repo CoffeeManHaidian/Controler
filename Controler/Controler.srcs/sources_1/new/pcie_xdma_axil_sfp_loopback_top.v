@@ -95,6 +95,7 @@ module pcie_xdma_axil_sfp_loopback_top #(
     wire [31:0] last_rx_addr;
     wire [31:0] last_rx_data;
     wire [31:0] board_test_status;
+    wire [31:0] decode_status;
 
     assign usr_irq_req = 1'b0;
 
@@ -221,7 +222,8 @@ module pcie_xdma_axil_sfp_loopback_top #(
         .last_rx_seq       (last_rx_seq),
         .last_rx_addr      (last_rx_addr),
         .last_rx_data      (last_rx_data),
-        .board_test_status (board_test_status)
+        .board_test_status (board_test_status),
+        .decode_status     (decode_status)
     );
 
 endmodule
