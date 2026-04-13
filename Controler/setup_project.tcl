@@ -67,6 +67,7 @@ set rtl_dir [file join $repo_root "Controler.srcs" "sources_1" "new"]
 set sim_dir [file join $repo_root "Controler.srcs" "sim_1" "new"]
 set constr_dir [file join $repo_root "Controler.srcs" "constrs_1" "new"]
 set ip_dir [file join $repo_root "Controler.srcs" "sources_1" "ip" "gtwizard_0"]
+set bitgen_pre_hook [file join $repo_root "scripts" "allow_unconstrained_sfp_bitgen.tcl"]
 set local_xdma_xci [file join $repo_root "Controler.srcs" "sources_1" "ip" "xdma_sys_xdma_0_0" "xdma_sys_xdma_0_0.xci"]
 set ref_xdma_xci "D:/FPGA/No.226_pcie_xdma_sys_x8_5g/No.226_pcie_xdma_sys_x8_5g.srcs/sources_1/bd/xdma_sys/ip/xdma_sys_xdma_0_0/xdma_sys_xdma_0_0.xci"
 
@@ -148,6 +149,11 @@ if {[llength $gtwizard_ips] > 0} {
 set xdma_ips [get_ips -quiet *xdma*]
 if {$xdma_ip_added && [llength $xdma_ips] > 0} {
     generate_target all $xdma_ips
+}
+
+if {[file exists $bitgen_pre_hook] && [llength [get_runs -quiet impl_1]] > 0} {
+    set_property STEPS.WRITE_BITSTREAM.TCL.PRE $bitgen_pre_hook [get_runs impl_1]
+    puts "Bitgen pre-hook: $bitgen_pre_hook"
 }
 
 save_project
