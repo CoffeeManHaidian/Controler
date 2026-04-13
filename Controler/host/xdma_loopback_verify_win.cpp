@@ -219,12 +219,6 @@ DevicePair auto_detect_devices() {
     auto c2h_nodes = build_c2h_nodes();
     auto setupapi_nodes = enumerate_setupapi_interfaces();
 
-    for (const auto& path : user_nodes) {
-        if (can_open_device(path.c_str(), GENERIC_READ | GENERIC_WRITE)) {
-            return {path, path};
-        }
-    }
-
     for (const auto& write_path : h2c_nodes) {
         if (!can_open_device(write_path.c_str(), GENERIC_WRITE)) {
             continue;
@@ -233,6 +227,12 @@ DevicePair auto_detect_devices() {
             if (can_open_device(read_path.c_str(), GENERIC_READ)) {
                 return {write_path, read_path};
             }
+        }
+    }
+
+    for (const auto& path : user_nodes) {
+        if (can_open_device(path.c_str(), GENERIC_READ | GENERIC_WRITE)) {
+            return {path, path};
         }
     }
 
@@ -509,7 +509,7 @@ void print_usage(const char* exe) {
     std::printf("  %s [device] rate <window_ms>\n", exe);
     std::printf("  %s scan\n", exe);
     std::printf("\n");
-    std::printf("Default device: auto-detect (xdma*_user / h2c+c2h / control / SetupDi interface)\n");
+    std::printf("Default device: auto-detect (h2c+c2h / xdma*_user / control / SetupDi interface)\n");
 }
 
 bool parse_u32(const char* text, uint32_t* value) {
@@ -531,8 +531,8 @@ int main(int argc, char* argv[]) {
         return 0;
     }
 
-    std::string write_device_path = "\\\\.\\xdma0_user";
-    std::string read_device_path = "\\\\.\\xdma0_user";
+    std::string write_device_path = "\\\\.\\xdma0_h2c_0";
+    std::string read_device_path = "\\\\.\\xdma0_c2h_0";
 
     if (argc > 1 && std::strncmp(argv[1], "\\\\.\\", 4) == 0) {
         write_device_path = argv[1];

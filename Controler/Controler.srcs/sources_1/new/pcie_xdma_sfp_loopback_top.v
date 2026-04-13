@@ -155,6 +155,7 @@ module pcie_xdma_sfp_loopback_top #(
         .axi_aclk         (axi_aclk),
         .axi_aresetn      (axi_aresetn),
         .m_axi_awaddr     (m_axi_awaddr),
+        .m_axi_awid       (m_axi_awid),
         .m_axi_awlen      (m_axi_awlen),
         .m_axi_awsize     (m_axi_awsize),
         .m_axi_awburst    (m_axi_awburst),

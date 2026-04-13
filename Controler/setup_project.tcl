@@ -3,7 +3,7 @@ set project_name "Controler"
 set project_dir [file join $repo_root "build" "vivado" $project_name]
 set project_xpr [file join $project_dir "${project_name}.xpr"]
 set part_name "xc7k325tffg900-2"
-set synth_top "pcie_xdma_axil_sfp_loopback_top"
+set synth_top "pcie_xdma_sfp_loopback_top"
 set sim_top "tb_host_register_loopback"
 
 proc ensure_file_exists {path_value} {
