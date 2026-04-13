@@ -31,10 +31,14 @@ set_property LOC GTXE2_CHANNEL_X0Y7 [get_cells {u_xdma_0/inst/xdma_sys_xdma_0_0_
 set_property PACKAGE_PIN J7 [get_ports GTREFCLK1_N]
 set_property PACKAGE_PIN J8 [get_ports GTREFCLK1_P]
 
-set_property PACKAGE_PIN E2 [get_ports SFP_TX_P]
-set_property PACKAGE_PIN F1 [get_ports SFP_TX_N]
-set_property PACKAGE_PIN F6 [get_ports SFP_RX_P]
-set_property PACKAGE_PIN F5 [get_ports SFP_RX_N]
+# Board-specific SFP GTX package pins must come from the exact carrier-board
+# schematic/pinout. The previous E2/F1/F6/F5 values are invalid for the
+# xc7k325tffg900-2 implementation run, so they are intentionally left unset
+# here instead of guessing high-speed transceiver pins.
+# set_property PACKAGE_PIN <SFP_TX_P_PIN> [get_ports SFP_TX_P]
+# set_property PACKAGE_PIN <SFP_TX_N_PIN> [get_ports SFP_TX_N]
+# set_property PACKAGE_PIN <SFP_RX_P_PIN> [get_ports SFP_RX_P]
+# set_property PACKAGE_PIN <SFP_RX_N_PIN> [get_ports SFP_RX_N]
 
 set_property PACKAGE_PIN E24 [get_ports SFP_TXFAULT]
 set_property PACKAGE_PIN C26 [get_ports SFP_LOS]

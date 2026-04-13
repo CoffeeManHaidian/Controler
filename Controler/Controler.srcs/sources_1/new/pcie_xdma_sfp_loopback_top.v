@@ -69,6 +69,21 @@ module pcie_xdma_sfp_loopback_top #(
     wire         m_axi_rvalid;
     wire         m_axi_rready;
 
+    // The XDMA IP configuration also exposes an AXI-Lite master. This top uses
+    // the full AXI4 M_AXI path, so tie the unused AXI-Lite return channel low
+    // and keep its request outputs on dummy nets to avoid undriven IP logic.
+    wire [31:0] m_axil_awaddr_unused;
+    wire [2:0]  m_axil_awprot_unused;
+    wire        m_axil_awvalid_unused;
+    wire [31:0] m_axil_wdata_unused;
+    wire [3:0]  m_axil_wstrb_unused;
+    wire        m_axil_wvalid_unused;
+    wire        m_axil_bready_unused;
+    wire [31:0] m_axil_araddr_unused;
+    wire [2:0]  m_axil_arprot_unused;
+    wire        m_axil_arvalid_unused;
+    wire        m_axil_rready_unused;
+
     // Keep status signals internal for the PCIe top. Host software reads them
     // back through the BAR/register path rather than through FPGA package pins.
     wire [31:0] status_reg;
@@ -144,7 +159,26 @@ module pcie_xdma_sfp_loopback_top #(
         .m_axi_arvalid    (m_axi_arvalid),
         .m_axi_arlock     (m_axi_arlock),
         .m_axi_arcache    (m_axi_arcache),
-        .m_axi_rready     (m_axi_rready)
+        .m_axi_rready     (m_axi_rready),
+        .m_axil_awaddr    (m_axil_awaddr_unused),
+        .m_axil_awprot    (m_axil_awprot_unused),
+        .m_axil_awvalid   (m_axil_awvalid_unused),
+        .m_axil_awready   (1'b0),
+        .m_axil_wdata     (m_axil_wdata_unused),
+        .m_axil_wstrb     (m_axil_wstrb_unused),
+        .m_axil_wvalid    (m_axil_wvalid_unused),
+        .m_axil_wready    (1'b0),
+        .m_axil_bvalid    (1'b0),
+        .m_axil_bresp     (2'b00),
+        .m_axil_bready    (m_axil_bready_unused),
+        .m_axil_araddr    (m_axil_araddr_unused),
+        .m_axil_arprot    (m_axil_arprot_unused),
+        .m_axil_arvalid   (m_axil_arvalid_unused),
+        .m_axil_arready   (1'b0),
+        .m_axil_rdata     (32'd0),
+        .m_axil_rresp     (2'b00),
+        .m_axil_rvalid    (1'b0),
+        .m_axil_rready    (m_axil_rready_unused)
     );
 
     xdma_m_axi_optical_loopback_top #(
