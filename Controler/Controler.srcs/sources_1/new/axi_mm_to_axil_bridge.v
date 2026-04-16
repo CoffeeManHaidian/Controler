@@ -70,6 +70,26 @@ module axi_mm_to_axil_bridge #(
 
     wire rst = ~aresetn;
 
+    function [31:0] translate_axi_addr;
+        input [31:0] axi_addr;
+        begin
+            // The XDMA M_AXI aperture in this project is 0x1000..0x1fff.
+            // Map it into the internal AXI-Lite address plan:
+            //   0x1000..0x17ff -> 0x0000..0x07ff  control/status registers
+            //   0x1800..0x1fff -> 0x1000..0x17ff  command BRAM window
+            // Direct addresses are preserved for user-BAR/debug builds.
+            if (axi_addr[31:12] == 20'h00001) begin
+                if (axi_addr[11]) begin
+                    translate_axi_addr = 32'h0000_1000 + {21'd0, axi_addr[10:0]};
+                end else begin
+                    translate_axi_addr = {21'd0, axi_addr[10:0]};
+                end
+            end else begin
+                translate_axi_addr = axi_addr;
+            end
+        end
+    endfunction
+
     always @(posedge aclk) begin
         if (rst) begin
             state         <= ST_IDLE;
@@ -105,7 +125,7 @@ module axi_mm_to_axil_bridge #(
                     if (s_axi_awvalid && s_axi_wvalid && s_axi_wlast && (s_axi_awlen == 8'd0)) begin
                         s_axi_awready  <= 1'b1;
                         s_axi_wready   <= 1'b1;
-                        m_axil_awaddr  <= s_axi_awaddr[31:0];
+                        m_axil_awaddr  <= translate_axi_addr(s_axi_awaddr[31:0]);
                         m_axil_awprot  <= 3'd0;
                         m_axil_awvalid <= 1'b1;
                         m_axil_wdata   <= s_axi_wdata[31:0];
@@ -114,7 +134,7 @@ module axi_mm_to_axil_bridge #(
                         state          <= ST_WRITE_ADDR;
                     end else if (s_axi_arvalid && (s_axi_arlen == 8'd0)) begin
                         s_axi_arready  <= 1'b1;
-                        m_axil_araddr  <= s_axi_araddr[31:0];
+                        m_axil_araddr  <= translate_axi_addr(s_axi_araddr[31:0]);
                         m_axil_arprot  <= 3'd0;
                         m_axil_arvalid <= 1'b1;
                         state          <= ST_READ_ADDR;
