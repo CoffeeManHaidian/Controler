@@ -156,7 +156,9 @@ if {[file exists $bitgen_pre_hook] && [llength [get_runs -quiet impl_1]] > 0} {
     puts "Bitgen pre-hook: $bitgen_pre_hook"
 }
 
-save_project
+if {[catch {save_project} save_msg]} {
+    puts "INFO: save_project skipped or unsupported in this Vivado version: $save_msg"
+}
 
 puts ""
 puts "Project setup completed successfully."
