@@ -67,6 +67,11 @@ module axi_mm_to_axil_bridge #(
     localparam ST_READ_DATA  = 3'd4;
 
     reg [2:0] state;
+    reg [AXI_ADDR_WIDTH-1:0] awaddr_latched;
+    reg [AXI_DATA_WIDTH-1:0] wdata_latched;
+    reg [(AXI_DATA_WIDTH/8)-1:0] wstrb_latched;
+    reg aw_seen;
+    reg w_seen;
 
     wire rst = ~aresetn;
 
@@ -113,6 +118,11 @@ module axi_mm_to_axil_bridge #(
             m_axil_arprot <= 3'd0;
             m_axil_arvalid<= 1'b0;
             m_axil_rready <= 1'b0;
+            awaddr_latched<= {AXI_ADDR_WIDTH{1'b0}};
+            wdata_latched <= {AXI_DATA_WIDTH{1'b0}};
+            wstrb_latched <= {(AXI_DATA_WIDTH/8){1'b0}};
+            aw_seen       <= 1'b0;
+            w_seen        <= 1'b0;
         end else begin
             s_axi_awready <= 1'b0;
             s_axi_wready  <= 1'b0;
@@ -122,15 +132,45 @@ module axi_mm_to_axil_bridge #(
                 ST_IDLE: begin
                     s_axi_rlast <= 1'b0;
 
-                    if (s_axi_awvalid && s_axi_wvalid && s_axi_wlast && (s_axi_awlen == 8'd0)) begin
+                    if (!aw_seen && s_axi_awvalid && (s_axi_awlen == 8'd0)) begin
                         s_axi_awready  <= 1'b1;
+                        awaddr_latched <= s_axi_awaddr;
+                        aw_seen        <= 1'b1;
+                    end
+
+                    if (!w_seen && s_axi_wvalid && s_axi_wlast) begin
                         s_axi_wready   <= 1'b1;
-                        m_axil_awaddr  <= translate_axi_addr(s_axi_awaddr[31:0]);
+                        wdata_latched  <= s_axi_wdata;
+                        wstrb_latched  <= s_axi_wstrb;
+                        w_seen         <= 1'b1;
+                    end
+
+                    if ((aw_seen || (s_axi_awvalid && (s_axi_awlen == 8'd0))) &&
+                        (w_seen  || (s_axi_wvalid && s_axi_wlast))) begin
+                        m_axil_awaddr  <= translate_axi_addr((aw_seen ? awaddr_latched[31:0] : s_axi_awaddr[31:0]));
                         m_axil_awprot  <= 3'd0;
                         m_axil_awvalid <= 1'b1;
-                        m_axil_wdata   <= s_axi_wdata[31:0];
-                        m_axil_wstrb   <= s_axi_wstrb[3:0];
+                        case ((aw_seen ? awaddr_latched[3:2] : s_axi_awaddr[3:2]))
+                            2'd0: begin
+                                m_axil_wdata <= (w_seen ? wdata_latched[31:0]   : s_axi_wdata[31:0]);
+                                m_axil_wstrb <= (w_seen ? wstrb_latched[3:0]   : s_axi_wstrb[3:0]);
+                            end
+                            2'd1: begin
+                                m_axil_wdata <= (w_seen ? wdata_latched[63:32]  : s_axi_wdata[63:32]);
+                                m_axil_wstrb <= (w_seen ? wstrb_latched[7:4]   : s_axi_wstrb[7:4]);
+                            end
+                            2'd2: begin
+                                m_axil_wdata <= (w_seen ? wdata_latched[95:64]  : s_axi_wdata[95:64]);
+                                m_axil_wstrb <= (w_seen ? wstrb_latched[11:8]  : s_axi_wstrb[11:8]);
+                            end
+                            default: begin
+                                m_axil_wdata <= (w_seen ? wdata_latched[127:96] : s_axi_wdata[127:96]);
+                                m_axil_wstrb <= (w_seen ? wstrb_latched[15:12] : s_axi_wstrb[15:12]);
+                            end
+                        endcase
                         m_axil_wvalid  <= 1'b1;
+                        aw_seen        <= 1'b0;
+                        w_seen         <= 1'b0;
                         state          <= ST_WRITE_ADDR;
                     end else if (s_axi_arvalid && (s_axi_arlen == 8'd0)) begin
                         s_axi_arready  <= 1'b1;

@@ -574,6 +574,11 @@ bool verify_single(HANDLE write_dev, HANDLE read_dev, AccessMode access_mode, ui
         return false;
     }
 
+    if (!enable_tx(write_dev, access_mode)) {
+        std::printf("Failed to enable TX, GetLastError=%lu\n", GetLastError());
+        return false;
+    }
+
     if (!send_one(write_dev, access_mode, addr, data)) {
         std::printf("Failed to send one frame, GetLastError=%lu\n", GetLastError());
         return false;
@@ -652,6 +657,11 @@ bool verify_burst(HANDLE write_dev,
 
     if (!read_snapshot(read_dev, access_mode, &before)) {
         std::printf("Failed to read pre-burst status, GetLastError=%lu\n", GetLastError());
+        return false;
+    }
+
+    if (!enable_tx(write_dev, access_mode)) {
+        std::printf("Failed to enable TX, GetLastError=%lu\n", GetLastError());
         return false;
     }
 

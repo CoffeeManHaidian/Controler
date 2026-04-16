@@ -36,6 +36,7 @@ module axil_to_host_regs (
 
     reg [31:0] awaddr_latched;
     reg [31:0] araddr_latched;
+    reg [31:0] wdata_latched;
     reg        aw_seen;
     reg        w_seen;
     reg        ar_pending;
@@ -59,6 +60,7 @@ module axil_to_host_regs (
             host_rd_addr  <= 32'd0;
             awaddr_latched<= 32'd0;
             araddr_latched<= 32'd0;
+            wdata_latched <= 32'd0;
             aw_seen       <= 1'b0;
             w_seen        <= 1'b0;
             ar_pending    <= 1'b0;
@@ -78,13 +80,14 @@ module axil_to_host_regs (
 
                 if (!w_seen && s_axi_wvalid) begin
                     s_axi_wready <= 1'b1;
+                    wdata_latched<= s_axi_wdata;
                     w_seen       <= 1'b1;
                 end
 
                 if (aw_seen && w_seen) begin
                     host_wr_en   <= 1'b1;
                     host_wr_addr <= awaddr_latched;
-                    host_wr_data <= s_axi_wdata;
+                    host_wr_data <= wdata_latched;
                     s_axi_bresp  <= 2'b00;
                     s_axi_bvalid <= 1'b1;
                     aw_seen      <= 1'b0;

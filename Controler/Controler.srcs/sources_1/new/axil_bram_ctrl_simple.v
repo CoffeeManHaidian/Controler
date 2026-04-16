@@ -33,6 +33,11 @@ module axil_bram_ctrl_simple #(
     wire rst = ~s_axi_aresetn;
     wire [ADDR_WIDTH-1:0] word_addr_aw = s_axi_awaddr[ADDR_WIDTH+2:3];
     wire [ADDR_WIDTH-1:0] word_addr_ar = s_axi_araddr[ADDR_WIDTH+2:3];
+    reg [31:0] awaddr_latched;
+    reg [31:0] wdata_latched;
+    reg [3:0]  wstrb_latched;
+    reg        aw_seen;
+    reg        w_seen;
 
     always @(posedge s_axi_aclk) begin
         if (rst) begin
@@ -48,6 +53,11 @@ module axil_bram_ctrl_simple #(
             bram_we       <= 8'd0;
             bram_addr     <= {ADDR_WIDTH{1'b0}};
             bram_din      <= 64'd0;
+            awaddr_latched<= 32'd0;
+            wdata_latched <= 32'd0;
+            wstrb_latched <= 4'd0;
+            aw_seen       <= 1'b0;
+            w_seen        <= 1'b0;
         end else begin
             s_axi_awready <= 1'b0;
             s_axi_wready  <= 1'b0;
@@ -55,7 +65,46 @@ module axil_bram_ctrl_simple #(
             bram_en       <= 1'b0;
             bram_we       <= 8'd0;
 
-            if (!s_axi_bvalid && s_axi_awvalid && s_axi_wvalid) begin
+            if (!s_axi_bvalid) begin
+                if (!aw_seen && s_axi_awvalid) begin
+                    s_axi_awready <= 1'b1;
+                    awaddr_latched<= s_axi_awaddr;
+                    aw_seen       <= 1'b1;
+                end
+
+                if (!w_seen && s_axi_wvalid) begin
+                    s_axi_wready  <= 1'b1;
+                    wdata_latched <= s_axi_wdata;
+                    wstrb_latched <= s_axi_wstrb;
+                    w_seen        <= 1'b1;
+                end
+
+                if (aw_seen && w_seen) begin
+                    s_axi_bvalid  <= 1'b1;
+                    s_axi_bresp   <= 2'b00;
+                    bram_en       <= 1'b1;
+                    bram_addr     <= awaddr_latched[ADDR_WIDTH+2:3];
+                    if (awaddr_latched[2]) begin
+                        bram_din[63:32] <= wdata_latched;
+                        bram_din[31:0]  <= 32'd0;
+                        bram_we[7:4]    <= wstrb_latched;
+                        bram_we[3:0]    <= 4'd0;
+                    end else begin
+                        bram_din[31:0]  <= wdata_latched;
+                        bram_din[63:32] <= 32'd0;
+                        bram_we[3:0]    <= wstrb_latched;
+                        bram_we[7:4]    <= 4'd0;
+                    end
+                    aw_seen      <= 1'b0;
+                    w_seen       <= 1'b0;
+                end
+            end else if (s_axi_bvalid && s_axi_bready) begin
+                s_axi_bvalid <= 1'b0;
+            end
+
+            if (!s_axi_bvalid && !aw_seen && !w_seen && s_axi_awvalid && s_axi_wvalid) begin
+                // Fast path for masters that present AXI-Lite address and data
+                // together; the latched path above handles separated channels.
                 s_axi_awready <= 1'b1;
                 s_axi_wready  <= 1'b1;
                 s_axi_bvalid  <= 1'b1;
@@ -73,8 +122,8 @@ module axil_bram_ctrl_simple #(
                     bram_we[3:0]    <= s_axi_wstrb;
                     bram_we[7:4]    <= 4'd0;
                 end
-            end else if (s_axi_bvalid && s_axi_bready) begin
-                s_axi_bvalid <= 1'b0;
+                aw_seen <= 1'b0;
+                w_seen  <= 1'b0;
             end
 
             if (!s_axi_rvalid && s_axi_arvalid) begin
