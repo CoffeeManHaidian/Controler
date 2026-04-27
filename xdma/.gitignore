@@ -1,0 +1,16 @@
+.Xil/
+.cache/
+build/
+bit_mcs/
+xsim.dir/
+*.jou
+*.log
+*.pb
+
+project_1/project_1.cache/
+project_1/project_1.hw/
+project_1/project_1.ip_user_files/
+project_1/project_1.runs/
+project_1/project_1.sim/
+
+gtwizard_0_ex/.Xil/
