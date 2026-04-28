@@ -36,8 +36,8 @@ initial begin
     data_in = 16'h0000;
     data_valid = 1'b0;
     use_internal_source = 1'b1;
-    addr_base = 16'h11A4;
-    addr_limit = 16'h11A7;
+    addr_base = 16'h1000;
+    addr_limit = 16'h1003;
 
     #20;
     rst = 1'b0;
@@ -46,28 +46,28 @@ initial begin
     if (!packet_valid) begin
         $fatal(1, "expected internal source to emit a packet immediately after reset release");
     end
-    if (packet_out !== 32'h11A4_1000) begin
-        $fatal(1, "expected first packet 11A4_1000, got %h", packet_out);
+    if (packet_out !== 32'h1000_1000) begin
+        $fatal(1, "expected first packet 1000_1000, got %h", packet_out);
     end
 
     @(posedge clk); #1;
-    if (packet_out !== 32'h11A5_1001) begin
-        $fatal(1, "expected second packet 11A5_1001, got %h", packet_out);
+    if (packet_out !== 32'h1001_1001) begin
+        $fatal(1, "expected second packet 1001_1001, got %h", packet_out);
     end
 
     @(posedge clk); #1;
-    if (packet_out !== 32'h11A6_1002) begin
-        $fatal(1, "expected third packet 11A6_1002, got %h", packet_out);
+    if (packet_out !== 32'h1002_1002) begin
+        $fatal(1, "expected third packet 1002_1002, got %h", packet_out);
     end
 
     @(posedge clk); #1;
-    if (packet_out !== 32'h11A7_1003) begin
-        $fatal(1, "expected fourth packet 11A7_1003, got %h", packet_out);
+    if (packet_out !== 32'h1003_1003) begin
+        $fatal(1, "expected fourth packet 1003_1003, got %h", packet_out);
     end
 
     @(posedge clk); #1;
-    if (packet_out !== 32'h11A4_1010) begin
-        $fatal(1, "expected wrapped packet 11A4_1010, got %h", packet_out);
+    if (packet_out !== 32'h1000_1010) begin
+        $fatal(1, "expected wrapped packet 1000_1010, got %h", packet_out);
     end
 
     use_internal_source = 1'b0;
@@ -78,8 +78,8 @@ initial begin
     if (!packet_valid) begin
         $fatal(1, "expected packet_valid during external data transfer");
     end
-    if (packet_out !== 32'h11A5_55AA) begin
-        $fatal(1, "expected external packet 11A5_55AA, got %h", packet_out);
+    if (packet_out !== 32'h1001_55AA) begin
+        $fatal(1, "expected external packet 1001_55AA, got %h", packet_out);
     end
     if (using_internal_source) begin
         $fatal(1, "expected using_internal_source to deassert in external mode");
