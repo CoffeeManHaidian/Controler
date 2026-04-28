@@ -67,6 +67,15 @@ wire [31:0] dbg_hv_packet_out;
 wire [15:0] dbg_hv_current_addr;
 wire        dbg_hv_packet_valid;
 wire        dbg_hv_using_internal_source;
+wire [31:0] dbg_hv_rx_packet_out;
+wire [15:0] dbg_hv_rx_current_addr;
+wire [15:0] dbg_hv_rx_current_data;
+wire [15:0] dbg_hv_rx_expected_addr;
+wire        dbg_hv_rx_packet_seen;
+wire        dbg_hv_rx_addr_in_range;
+wire        dbg_hv_rx_seq_locked;
+wire        dbg_hv_rx_seq_ok;
+wire [7:0]  dbg_hv_rx_seq_error_count;
 wire        dbg_soft_reset;
 wire        dbg_drpclk_heartbeat;
 
@@ -130,6 +139,15 @@ srio_base_shell u_srio_base_shell (
     .DBG_HV_CURRENT_ADDR(dbg_hv_current_addr),
     .DBG_HV_PACKET_VALID(dbg_hv_packet_valid),
     .DBG_HV_USING_INTERNAL_SOURCE(dbg_hv_using_internal_source),
+    .DBG_HV_RX_PACKET_OUT(dbg_hv_rx_packet_out),
+    .DBG_HV_RX_CURRENT_ADDR(dbg_hv_rx_current_addr),
+    .DBG_HV_RX_CURRENT_DATA(dbg_hv_rx_current_data),
+    .DBG_HV_RX_EXPECTED_ADDR(dbg_hv_rx_expected_addr),
+    .DBG_HV_RX_PACKET_SEEN(dbg_hv_rx_packet_seen),
+    .DBG_HV_RX_ADDR_IN_RANGE(dbg_hv_rx_addr_in_range),
+    .DBG_HV_RX_SEQ_LOCKED(dbg_hv_rx_seq_locked),
+    .DBG_HV_RX_SEQ_OK(dbg_hv_rx_seq_ok),
+    .DBG_HV_RX_SEQ_ERROR_COUNT(dbg_hv_rx_seq_error_count),
     .DBG_SOFT_RESET(dbg_soft_reset),
     .DBG_DRPCLK_HEARTBEAT(dbg_drpclk_heartbeat)
 );
@@ -180,7 +198,16 @@ ila_sfp_rx u_ila_sfp_rx (
     .probe19(dbg_gt0_rxdata_aligned),
     .probe20(dbg_gt0_rxdata_track),
     .probe21(dbg_gt0_rxalign_sel),
-    .probe22(dbg_gt0_rxstart_of_packet)
+    .probe22(dbg_gt0_rxstart_of_packet),
+    .probe23(dbg_hv_rx_packet_out),
+    .probe24(dbg_hv_rx_current_addr),
+    .probe25(dbg_hv_rx_current_data),
+    .probe26(dbg_hv_rx_expected_addr),
+    .probe27(dbg_hv_rx_packet_seen),
+    .probe28(dbg_hv_rx_addr_in_range),
+    .probe29(dbg_hv_rx_seq_locked),
+    .probe30(dbg_hv_rx_seq_ok),
+    .probe31(dbg_hv_rx_seq_error_count)
 );
 
 endmodule

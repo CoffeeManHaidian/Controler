@@ -135,6 +135,15 @@ module gtwizard_0_exdes #
     output wire [15:0]  DBG_HV_CURRENT_ADDR,
     output wire         DBG_HV_PACKET_VALID,
     output wire         DBG_HV_USING_INTERNAL_SOURCE,
+    output wire [31:0]  DBG_HV_RX_PACKET_OUT,
+    output wire [15:0]  DBG_HV_RX_CURRENT_ADDR,
+    output wire [15:0]  DBG_HV_RX_CURRENT_DATA,
+    output wire [15:0]  DBG_HV_RX_EXPECTED_ADDR,
+    output wire         DBG_HV_RX_PACKET_SEEN,
+    output wire         DBG_HV_RX_ADDR_IN_RANGE,
+    output wire         DBG_HV_RX_SEQ_LOCKED,
+    output wire         DBG_HV_RX_SEQ_OK,
+    output wire [7:0]   DBG_HV_RX_SEQ_ERROR_COUNT,
     output wire         DBG_SOFT_RESET,
     output wire         DBG_DRPCLK_HEARTBEAT
 );
@@ -328,6 +337,15 @@ module gtwizard_0_exdes #
     wire            gt0_hv_using_internal_i;
     wire    [15:0]  gt0_hv_external_data_i;
     wire            gt0_hv_external_valid_i;
+    wire    [31:0]  gt0_hv_rx_packet_i;
+    wire    [15:0]  gt0_hv_rx_current_addr_i;
+    wire    [15:0]  gt0_hv_rx_current_data_i;
+    wire    [15:0]  gt0_hv_rx_expected_addr_i;
+    wire            gt0_hv_rx_packet_seen_i;
+    wire            gt0_hv_rx_addr_in_range_i;
+    wire            gt0_hv_rx_seq_locked_i;
+    wire            gt0_hv_rx_seq_ok_i;
+    wire    [7:0]   gt0_hv_rx_seq_error_count_i;
     
     
     wire            gt0_block_sync_i;
@@ -824,6 +842,25 @@ always @(posedge  gt0_txusrclk2_i or negedge gt0_txfsmresetdone_i)
         .DEBUG_START_OF_PACKET_OUT      (gt0_rxstart_of_packet_dbg_i)
     );
 
+    hv_proto_rx_mon gt0_hv_proto_rx_mon
+    (
+        .clk            (gt0_rxusrclk2_i),
+        .rst            (gt0_rx_system_reset_c),
+        .packet_in      (gt0_rxdata_track_dbg_i),
+        .packet_valid   (gt0_track_data_i),
+        .addr_base      (16'h1000),
+        .addr_limit     (16'h11A4),
+        .packet_out     (gt0_hv_rx_packet_i),
+        .current_addr   (gt0_hv_rx_current_addr_i),
+        .current_data   (gt0_hv_rx_current_data_i),
+        .expected_addr  (gt0_hv_rx_expected_addr_i),
+        .packet_seen    (gt0_hv_rx_packet_seen_i),
+        .addr_in_range  (gt0_hv_rx_addr_in_range_i),
+        .seq_locked     (gt0_hv_rx_seq_locked_i),
+        .seq_ok         (gt0_hv_rx_seq_ok_i),
+        .seq_error_count(gt0_hv_rx_seq_error_count_i)
+    );
+
 
 
     assign TRACK_DATA_OUT = track_data_out_i;
@@ -925,6 +962,15 @@ assign DBG_HV_PACKET_OUT       = gt0_hv_packet_i;
 assign DBG_HV_CURRENT_ADDR     = gt0_hv_current_addr_i;
 assign DBG_HV_PACKET_VALID     = gt0_hv_packet_valid_i;
 assign DBG_HV_USING_INTERNAL_SOURCE = gt0_hv_using_internal_i;
+assign DBG_HV_RX_PACKET_OUT    = gt0_hv_rx_packet_i;
+assign DBG_HV_RX_CURRENT_ADDR  = gt0_hv_rx_current_addr_i;
+assign DBG_HV_RX_CURRENT_DATA  = gt0_hv_rx_current_data_i;
+assign DBG_HV_RX_EXPECTED_ADDR = gt0_hv_rx_expected_addr_i;
+assign DBG_HV_RX_PACKET_SEEN   = gt0_hv_rx_packet_seen_i;
+assign DBG_HV_RX_ADDR_IN_RANGE = gt0_hv_rx_addr_in_range_i;
+assign DBG_HV_RX_SEQ_LOCKED    = gt0_hv_rx_seq_locked_i;
+assign DBG_HV_RX_SEQ_OK        = gt0_hv_rx_seq_ok_i;
+assign DBG_HV_RX_SEQ_ERROR_COUNT = gt0_hv_rx_seq_error_count_i;
 assign DBG_SOFT_RESET          = soft_reset_i;
 assign DBG_DRPCLK_HEARTBEAT    = drpclk_heartbeat_cnt[15];
 endmodule

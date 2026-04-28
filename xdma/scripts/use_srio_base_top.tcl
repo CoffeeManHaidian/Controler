@@ -22,6 +22,7 @@ set ad9516_dir [file join $vendor_root "ad9516_ctl"]
 set src_files [list \
     [file join $src_root "new" "sfp_srio_base_top.v"] \
     [file join $src_root "new" "hv_proto_tx.v"] \
+    [file join $src_root "new" "hv_proto_rx_mon.v"] \
     [file join $vendor_root "example_design" "srio_base_shell.v"] \
     [file join $exdes_dir "gtwizard_0_exdes.v"] \
     [file join $exdes_dir "gtwizard_0_gt_frame_gen.v"] \
@@ -102,7 +103,7 @@ if {[llength [get_ips -quiet ila_sfp_rx]] == 0} {
     create_ip -name ila -vendor xilinx.com -library ip -version 6.2 -module_name ila_sfp_rx -dir $ip_dir
 }
 set_property -dict [list \
-    CONFIG.C_NUM_OF_PROBES {23} \
+    CONFIG.C_NUM_OF_PROBES {32} \
     CONFIG.C_PROBE0_WIDTH {32} \
     CONFIG.C_PROBE1_WIDTH {4} \
     CONFIG.C_PROBE2_WIDTH {8} \
@@ -126,6 +127,15 @@ set_property -dict [list \
     CONFIG.C_PROBE20_WIDTH {32} \
     CONFIG.C_PROBE21_WIDTH {2} \
     CONFIG.C_PROBE22_WIDTH {1} \
+    CONFIG.C_PROBE23_WIDTH {32} \
+    CONFIG.C_PROBE24_WIDTH {16} \
+    CONFIG.C_PROBE25_WIDTH {16} \
+    CONFIG.C_PROBE26_WIDTH {16} \
+    CONFIG.C_PROBE27_WIDTH {1} \
+    CONFIG.C_PROBE28_WIDTH {1} \
+    CONFIG.C_PROBE29_WIDTH {1} \
+    CONFIG.C_PROBE30_WIDTH {1} \
+    CONFIG.C_PROBE31_WIDTH {8} \
     CONFIG.C_DATA_DEPTH {1024} \
 ] [get_ips ila_sfp_rx]
 generate_target -force all [get_ips ila_sfp_rx]
