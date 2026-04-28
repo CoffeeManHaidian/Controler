@@ -8,43 +8,28 @@ module hv_proto_tx (
     input  wire        use_internal_source,
     input  wire [15:0] addr_base,
     input  wire [15:0] addr_limit,
+    input  wire [6:0]  frame_valid_count,
     output reg  [31:0] packet_out,
     output reg         packet_valid,
     output reg  [15:0] current_addr,
     output reg         using_internal_source
 );
 
-reg [15:0] internal_rom [0:15];
-reg [3:0]  internal_index;
+localparam [6:0] FRAME_WORD_COUNT = 7'd100;
+localparam [15:0] INVALID_DATA_WORD = 16'h90BC;
 
-wire        use_external_word;
-wire        use_internal_word;
-wire        emit_word;
+reg  [6:0]  frame_index;
+wire        slot_has_valid_payload;
+wire [15:0] slot_addr;
 wire [15:0] next_data_word;
 
-assign use_external_word = (~use_internal_source) & data_valid;
-assign use_internal_word = use_internal_source;
-assign emit_word         = use_external_word | use_internal_word;
-assign next_data_word    = use_internal_source ? internal_rom[internal_index] : data_in;
-
-initial begin
-    internal_rom[0]  = 16'h1000;
-    internal_rom[1]  = 16'h1001;
-    internal_rom[2]  = 16'h1002;
-    internal_rom[3]  = 16'h1003;
-    internal_rom[4]  = 16'h1010;
-    internal_rom[5]  = 16'h1011;
-    internal_rom[6]  = 16'h1012;
-    internal_rom[7]  = 16'h1013;
-    internal_rom[8]  = 16'h1020;
-    internal_rom[9]  = 16'h1021;
-    internal_rom[10] = 16'h1022;
-    internal_rom[11] = 16'h1023;
-    internal_rom[12] = 16'h1030;
-    internal_rom[13] = 16'h1031;
-    internal_rom[14] = 16'h1032;
-    internal_rom[15] = 16'h1033;
-end
+assign slot_has_valid_payload = (frame_index < frame_valid_count);
+assign slot_addr = addr_base + {9'd0, frame_index};
+assign next_data_word =
+    !slot_has_valid_payload ? INVALID_DATA_WORD :
+    use_internal_source     ? slot_addr :
+    data_valid              ? data_in :
+                              INVALID_DATA_WORD;
 
 always @(posedge clk) begin
     if (rst) begin
@@ -52,23 +37,17 @@ always @(posedge clk) begin
         packet_valid           <= 1'b0;
         current_addr           <= addr_base;
         using_internal_source  <= 1'b1;
-        internal_index         <= 4'd0;
+        frame_index            <= 7'd0;
     end else begin
         using_internal_source <= use_internal_source;
-        packet_valid          <= emit_word;
+        packet_valid          <= 1'b1;
+        packet_out            <= {slot_addr, next_data_word};
+        current_addr          <= slot_addr;
 
-        if (emit_word) begin
-            packet_out <= {current_addr, next_data_word};
-
-            if (use_internal_word) begin
-                internal_index <= internal_index + 4'd1;
-            end
-
-            if (current_addr >= addr_limit) begin
-                current_addr <= addr_base;
-            end else begin
-                current_addr <= current_addr + 16'd1;
-            end
+        if (frame_index == (FRAME_WORD_COUNT - 7'd1)) begin
+            frame_index <= 7'd0;
+        end else begin
+            frame_index <= frame_index + 7'd1;
         end
     end
 end

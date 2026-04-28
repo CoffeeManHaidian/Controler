@@ -98,6 +98,10 @@ module gtwizard_0_GT_FRAME_CHECK #
     
     // Track Data
     output wire         TRACK_DATA_OUT,
+    output wire [(RX_DATA_WIDTH-1):0] DEBUG_RX_DATA_ALIGNED_OUT,
+    output wire [(RX_DATA_WIDTH-1):0] DEBUG_RX_DATA_TRACK_OUT,
+    output wire [1:0]   DEBUG_SEL_OUT,
+    output wire         DEBUG_START_OF_PACKET_OUT,
 
     // System Interface
     input  wire         USER_CLK,
@@ -444,6 +448,10 @@ wire            tied_to_vcc_i;
   end
 
 assign TRACK_DATA_OUT = sm_link;
+assign DEBUG_RX_DATA_ALIGNED_OUT = rx_data_aligned;
+assign DEBUG_RX_DATA_TRACK_OUT = rx_data_r_track;
+assign DEBUG_SEL_OUT = sel;
+assign DEBUG_START_OF_PACKET_OUT = start_of_packet_detected_r;
     //____________________________ Counter to read from BRAM __________________________    
     always @(posedge USER_CLK)
         if(system_reset_r2 ||  (read_counter_i == (WORDS_IN_BRAM-1)))

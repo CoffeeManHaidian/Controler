@@ -8,6 +8,8 @@ reg  [31:0] packet_in;
 reg         packet_valid;
 reg  [15:0] addr_base;
 reg  [15:0] addr_limit;
+reg  [6:0]  frame_valid_count;
+integer     filler_addr;
 wire [31:0] packet_out;
 wire [15:0] current_addr;
 wire [15:0] current_data;
@@ -16,6 +18,7 @@ wire        packet_seen;
 wire        addr_in_range;
 wire        seq_locked;
 wire        seq_ok;
+wire        invalid_fill;
 wire [7:0]  seq_error_count;
 
 hv_proto_rx_mon dut (
@@ -25,6 +28,7 @@ hv_proto_rx_mon dut (
     .packet_valid(packet_valid),
     .addr_base(addr_base),
     .addr_limit(addr_limit),
+    .frame_valid_count(frame_valid_count),
     .packet_out(packet_out),
     .current_addr(current_addr),
     .current_data(current_data),
@@ -33,6 +37,7 @@ hv_proto_rx_mon dut (
     .addr_in_range(addr_in_range),
     .seq_locked(seq_locked),
     .seq_ok(seq_ok),
+    .invalid_fill(invalid_fill),
     .seq_error_count(seq_error_count)
 );
 
@@ -54,13 +59,14 @@ initial begin
     packet_in = 32'h0000_0000;
     packet_valid = 1'b0;
     addr_base = 16'h1000;
-    addr_limit = 16'h1003;
+    addr_limit = 16'h11A4;
+    frame_valid_count = 7'd2;
 
     #20;
     rst = 1'b0;
 
     send_packet(32'h1000_1000);
-    if (!packet_seen || !addr_in_range || !seq_locked || !seq_ok) begin
+    if (!packet_seen || !addr_in_range || !seq_locked || !seq_ok || invalid_fill) begin
         $fatal(1, "expected first packet to establish RX monitor lock");
     end
     if (expected_addr !== 16'h1001) begin
@@ -68,21 +74,31 @@ initial begin
     end
 
     send_packet(32'h1001_1001);
+    if (!seq_ok || seq_error_count !== 8'h00 || invalid_fill) begin
+        $fatal(1, "expected second packet to remain a valid payload");
+    end
+
+    send_packet(32'h1002_90BC);
+    if (!invalid_fill) begin
+        $fatal(1, "expected first filler packet to be detected as invalid fill");
+    end
     if (!seq_ok || seq_error_count !== 8'h00) begin
-        $fatal(1, "expected second packet to match sequence");
+        $fatal(1, "expected first filler packet to preserve sequence");
     end
 
-    send_packet(32'h1003_1003);
-    if (seq_ok) begin
-        $fatal(1, "expected skipped address to trip sequence error");
-    end
-    if (seq_error_count !== 8'h01) begin
-        $fatal(1, "expected exactly one sequence error, got %h", seq_error_count);
+    for (filler_addr = 16'h1003; filler_addr <= 16'h1063; filler_addr = filler_addr + 1) begin
+        send_packet({filler_addr[15:0], 16'h90BC});
+        if (!invalid_fill) begin
+            $fatal(1, "expected filler packet %h to remain invalid fill", filler_addr[15:0]);
+        end
+        if (!seq_ok || seq_error_count !== 8'h00) begin
+            $fatal(1, "expected filler packet %h to preserve sequence", filler_addr[15:0]);
+        end
     end
 
-    send_packet(32'h1000_1010);
-    if (!seq_ok) begin
-        $fatal(1, "expected wrapped packet to match monitor expectation");
+    send_packet(32'h1000_1000);
+    if (!seq_ok || seq_error_count !== 8'h00 || invalid_fill) begin
+        $fatal(1, "expected next frame restart to clear back into good sequence");
     end
 
     $display("hv_proto_rx_mon_tb PASS");

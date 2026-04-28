@@ -75,6 +75,7 @@ wire        dbg_hv_rx_packet_seen;
 wire        dbg_hv_rx_addr_in_range;
 wire        dbg_hv_rx_seq_locked;
 wire        dbg_hv_rx_seq_ok;
+wire        dbg_hv_rx_invalid_fill;
 wire [7:0]  dbg_hv_rx_seq_error_count;
 wire        dbg_soft_reset;
 wire        dbg_drpclk_heartbeat;
@@ -147,6 +148,7 @@ srio_base_shell u_srio_base_shell (
     .DBG_HV_RX_ADDR_IN_RANGE(dbg_hv_rx_addr_in_range),
     .DBG_HV_RX_SEQ_LOCKED(dbg_hv_rx_seq_locked),
     .DBG_HV_RX_SEQ_OK(dbg_hv_rx_seq_ok),
+    .DBG_HV_RX_INVALID_FILL(dbg_hv_rx_invalid_fill),
     .DBG_HV_RX_SEQ_ERROR_COUNT(dbg_hv_rx_seq_error_count),
     .DBG_SOFT_RESET(dbg_soft_reset),
     .DBG_DRPCLK_HEARTBEAT(dbg_drpclk_heartbeat)
@@ -207,7 +209,8 @@ ila_sfp_rx u_ila_sfp_rx (
     .probe28(dbg_hv_rx_addr_in_range),
     .probe29(dbg_hv_rx_seq_locked),
     .probe30(dbg_hv_rx_seq_ok),
-    .probe31(dbg_hv_rx_seq_error_count)
+    .probe31(dbg_hv_rx_invalid_fill),
+    .probe32(dbg_hv_rx_seq_error_count)
 );
 
 endmodule

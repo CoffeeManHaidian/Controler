@@ -66,6 +66,7 @@ module srio_base_shell (
     output wire         DBG_HV_RX_ADDR_IN_RANGE,
     output wire         DBG_HV_RX_SEQ_LOCKED,
     output wire         DBG_HV_RX_SEQ_OK,
+    output wire         DBG_HV_RX_INVALID_FILL,
     output wire [7:0]   DBG_HV_RX_SEQ_ERROR_COUNT,
     output wire         DBG_SOFT_RESET,
     output wire         DBG_DRPCLK_HEARTBEAT
@@ -137,6 +138,7 @@ gtwizard_0_exdes u_gtwizard_0_exdes (
     .DBG_HV_RX_ADDR_IN_RANGE(DBG_HV_RX_ADDR_IN_RANGE),
     .DBG_HV_RX_SEQ_LOCKED(DBG_HV_RX_SEQ_LOCKED),
     .DBG_HV_RX_SEQ_OK(DBG_HV_RX_SEQ_OK),
+    .DBG_HV_RX_INVALID_FILL(DBG_HV_RX_INVALID_FILL),
     .DBG_HV_RX_SEQ_ERROR_COUNT(DBG_HV_RX_SEQ_ERROR_COUNT),
     .DBG_SOFT_RESET(DBG_SOFT_RESET),
     .DBG_DRPCLK_HEARTBEAT(DBG_DRPCLK_HEARTBEAT)

@@ -143,6 +143,7 @@ module gtwizard_0_exdes #
     output wire         DBG_HV_RX_ADDR_IN_RANGE,
     output wire         DBG_HV_RX_SEQ_LOCKED,
     output wire         DBG_HV_RX_SEQ_OK,
+    output wire         DBG_HV_RX_INVALID_FILL,
     output wire [7:0]   DBG_HV_RX_SEQ_ERROR_COUNT,
     output wire         DBG_SOFT_RESET,
     output wire         DBG_DRPCLK_HEARTBEAT
@@ -345,7 +346,9 @@ module gtwizard_0_exdes #
     wire            gt0_hv_rx_addr_in_range_i;
     wire            gt0_hv_rx_seq_locked_i;
     wire            gt0_hv_rx_seq_ok_i;
+    wire            gt0_hv_rx_invalid_fill_i;
     wire    [7:0]   gt0_hv_rx_seq_error_count_i;
+    wire            gt0_hv_rx_packet_valid_i;
     
     
     wire            gt0_block_sync_i;
@@ -755,6 +758,7 @@ always @(posedge  gt0_txusrclk2_i or negedge gt0_txfsmresetdone_i)
         .use_internal_source  (1'b1),
         .addr_base            (16'h1000),
         .addr_limit           (16'h11A4),
+        .frame_valid_count    (7'd97),
         .packet_out           (gt0_hv_packet_i),
         .packet_valid         (gt0_hv_packet_valid_i),
         .current_addr         (gt0_hv_current_addr_i),
@@ -842,14 +846,21 @@ always @(posedge  gt0_txusrclk2_i or negedge gt0_txfsmresetdone_i)
         .DEBUG_START_OF_PACKET_OUT      (gt0_rxstart_of_packet_dbg_i)
     );
 
+    assign gt0_hv_rx_packet_valid_i =
+        gt0_rxbyteisaligned_i &&
+        !gt0_rx_system_reset_c &&
+        (gt0_rxdisperr_i == 4'd0) &&
+        (gt0_rxnotintable_i == 4'd0);
+
     hv_proto_rx_mon gt0_hv_proto_rx_mon
     (
         .clk            (gt0_rxusrclk2_i),
         .rst            (gt0_rx_system_reset_c),
         .packet_in      (gt0_rxdata_track_dbg_i),
-        .packet_valid   (gt0_track_data_i),
+        .packet_valid   (gt0_hv_rx_packet_valid_i),
         .addr_base      (16'h1000),
         .addr_limit     (16'h11A4),
+        .frame_valid_count(7'd97),
         .packet_out     (gt0_hv_rx_packet_i),
         .current_addr   (gt0_hv_rx_current_addr_i),
         .current_data   (gt0_hv_rx_current_data_i),
@@ -858,6 +869,7 @@ always @(posedge  gt0_txusrclk2_i or negedge gt0_txfsmresetdone_i)
         .addr_in_range  (gt0_hv_rx_addr_in_range_i),
         .seq_locked     (gt0_hv_rx_seq_locked_i),
         .seq_ok         (gt0_hv_rx_seq_ok_i),
+        .invalid_fill   (gt0_hv_rx_invalid_fill_i),
         .seq_error_count(gt0_hv_rx_seq_error_count_i)
     );
 
@@ -970,6 +982,7 @@ assign DBG_HV_RX_PACKET_SEEN   = gt0_hv_rx_packet_seen_i;
 assign DBG_HV_RX_ADDR_IN_RANGE = gt0_hv_rx_addr_in_range_i;
 assign DBG_HV_RX_SEQ_LOCKED    = gt0_hv_rx_seq_locked_i;
 assign DBG_HV_RX_SEQ_OK        = gt0_hv_rx_seq_ok_i;
+assign DBG_HV_RX_INVALID_FILL  = gt0_hv_rx_invalid_fill_i;
 assign DBG_HV_RX_SEQ_ERROR_COUNT = gt0_hv_rx_seq_error_count_i;
 assign DBG_SOFT_RESET          = soft_reset_i;
 assign DBG_DRPCLK_HEARTBEAT    = drpclk_heartbeat_cnt[15];
