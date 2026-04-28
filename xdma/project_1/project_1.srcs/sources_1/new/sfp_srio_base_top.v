@@ -58,7 +58,15 @@ wire        dbg_gt0_rxcommadet;
 wire        dbg_gt0_rxmcommaalignen;
 wire        dbg_gt0_rxpcommaalignen;
 wire [1:0]  dbg_gt0_rxclkcorcnt;
+wire [31:0] dbg_gt0_rxdata_aligned;
+wire [31:0] dbg_gt0_rxdata_track;
+wire [1:0]  dbg_gt0_rxalign_sel;
+wire        dbg_gt0_rxstart_of_packet;
 wire        dbg_gt0_rxusrclk2;
+wire [31:0] dbg_hv_packet_out;
+wire [15:0] dbg_hv_current_addr;
+wire        dbg_hv_packet_valid;
+wire        dbg_hv_using_internal_source;
 wire        dbg_soft_reset;
 wire        dbg_drpclk_heartbeat;
 
@@ -113,7 +121,15 @@ srio_base_shell u_srio_base_shell (
     .DBG_GT0_RXMCOMMAALIGNEN(dbg_gt0_rxmcommaalignen),
     .DBG_GT0_RXPCOMMAALIGNEN(dbg_gt0_rxpcommaalignen),
     .DBG_GT0_RXCLKCORCNT(dbg_gt0_rxclkcorcnt),
+    .DBG_GT0_RXDATA_ALIGNED(dbg_gt0_rxdata_aligned),
+    .DBG_GT0_RXDATA_TRACK(dbg_gt0_rxdata_track),
+    .DBG_GT0_RXALIGN_SEL(dbg_gt0_rxalign_sel),
+    .DBG_GT0_RXSTART_OF_PACKET(dbg_gt0_rxstart_of_packet),
     .DBG_GT0_RXUSRCLK2(dbg_gt0_rxusrclk2),
+    .DBG_HV_PACKET_OUT(dbg_hv_packet_out),
+    .DBG_HV_CURRENT_ADDR(dbg_hv_current_addr),
+    .DBG_HV_PACKET_VALID(dbg_hv_packet_valid),
+    .DBG_HV_USING_INTERNAL_SOURCE(dbg_hv_using_internal_source),
     .DBG_SOFT_RESET(dbg_soft_reset),
     .DBG_DRPCLK_HEARTBEAT(dbg_drpclk_heartbeat)
 );
@@ -133,7 +149,11 @@ ila_sfp_tx u_ila_sfp_tx (
     .probe10(dbg_gt0_txpcsreset),
     .probe11(dbg_soft_reset),
     .probe12(dbg_drpclk_heartbeat),
-    .probe13(dbg_gt0_tx_read_counter)
+    .probe13(dbg_gt0_tx_read_counter),
+    .probe14(dbg_hv_packet_out),
+    .probe15(dbg_hv_current_addr),
+    .probe16(dbg_hv_packet_valid),
+    .probe17(dbg_hv_using_internal_source)
 );
 
 ila_sfp_rx u_ila_sfp_rx (
@@ -156,7 +176,11 @@ ila_sfp_rx u_ila_sfp_rx (
     .probe15(dbg_gt0_rxcommadet),
     .probe16(dbg_gt0_rxmcommaalignen),
     .probe17(dbg_gt0_rxpcommaalignen),
-    .probe18(dbg_gt0_rxclkcorcnt)
+    .probe18(dbg_gt0_rxclkcorcnt),
+    .probe19(dbg_gt0_rxdata_aligned),
+    .probe20(dbg_gt0_rxdata_track),
+    .probe21(dbg_gt0_rxalign_sel),
+    .probe22(dbg_gt0_rxstart_of_packet)
 );
 
 endmodule

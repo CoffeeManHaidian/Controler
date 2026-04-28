@@ -126,7 +126,15 @@ module gtwizard_0_exdes #
     output wire         DBG_GT0_RXMCOMMAALIGNEN,
     output wire         DBG_GT0_RXPCOMMAALIGNEN,
     output wire [1:0]   DBG_GT0_RXCLKCORCNT,
+    output wire [31:0]  DBG_GT0_RXDATA_ALIGNED,
+    output wire [31:0]  DBG_GT0_RXDATA_TRACK,
+    output wire [1:0]   DBG_GT0_RXALIGN_SEL,
+    output wire         DBG_GT0_RXSTART_OF_PACKET,
     output wire         DBG_GT0_RXUSRCLK2,
+    output wire [31:0]  DBG_HV_PACKET_OUT,
+    output wire [15:0]  DBG_HV_CURRENT_ADDR,
+    output wire         DBG_HV_PACKET_VALID,
+    output wire         DBG_HV_USING_INTERNAL_SOURCE,
     output wire         DBG_SOFT_RESET,
     output wire         DBG_DRPCLK_HEARTBEAT
 );
@@ -311,7 +319,15 @@ module gtwizard_0_exdes #
    
     wire    [15:0]  gt0_txdata_float16_i;
     wire    [31:0]  gt0_txdata_float_i;
+    wire    [79:0]  gt0_frame_gen_data_i;
+    wire    [7:0]   gt0_frame_gen_ctrl_i;
     wire    [8:0]   gt0_tx_read_counter_i;
+    wire    [31:0]  gt0_hv_packet_i;
+    wire            gt0_hv_packet_valid_i;
+    wire    [15:0]  gt0_hv_current_addr_i;
+    wire            gt0_hv_using_internal_i;
+    wire    [15:0]  gt0_hv_external_data_i;
+    wire            gt0_hv_external_valid_i;
     
     
     wire            gt0_block_sync_i;
@@ -321,6 +337,10 @@ module gtwizard_0_exdes #
     wire            gt0_inc_in_i;
     wire            gt0_inc_out_i;
     wire    [31:0]  gt0_unscrambled_data_i;
+    wire    [31:0]  gt0_rxdata_aligned_dbg_i;
+    wire    [31:0]  gt0_rxdata_track_dbg_i;
+    wire    [1:0]   gt0_rxalign_sel_dbg_i;
+    wire            gt0_rxstart_of_packet_dbg_i;
 
     wire            reset_on_data_error_i;
     wire            track_data_out_i;
@@ -329,6 +349,8 @@ module gtwizard_0_exdes #
     reg     [19:0]  cnt_0 = 20'd0;
     reg             trig_ad9516 = 1'b0;
   
+    assign gt0_hv_external_data_i  = 16'h0000;
+    assign gt0_hv_external_valid_i = 1'b0;
 
     //--------------------- Chipscope Signals ---------------------------------
     (*mark_debug = "TRUE" *)wire   rxresetdone_vio_i;
@@ -706,6 +728,21 @@ always @(posedge  gt0_txusrclk2_i or negedge gt0_txfsmresetdone_i)
     // of your control and alignment characters.
 
 
+    hv_proto_tx gt0_hv_proto_tx
+    (
+        .clk                  (gt0_txusrclk2_i),
+        .rst                  (gt0_tx_system_reset_c),
+        .data_in              (gt0_hv_external_data_i),
+        .data_valid           (gt0_hv_external_valid_i),
+        .use_internal_source  (1'b1),
+        .addr_base            (16'h11A4),
+        .addr_limit           (16'h11B3),
+        .packet_out           (gt0_hv_packet_i),
+        .packet_valid         (gt0_hv_packet_valid_i),
+        .current_addr         (gt0_hv_current_addr_i),
+        .using_internal_source(gt0_hv_using_internal_i)
+    );
+
     gtwizard_0_GT_FRAME_GEN #
     (
         .WORDS_IN_BRAM(EXAMPLE_WORDS_IN_BRAM)
@@ -713,14 +750,21 @@ always @(posedge  gt0_txusrclk2_i or negedge gt0_txfsmresetdone_i)
     gt0_frame_gen
     (
         // User Interface
-        .TX_DATA_OUT                    ({gt0_txdata_float_i,gt0_txdata_i,gt0_txdata_float16_i}),
-        .TXCTRL_OUT                     ({gt0_txcharisk_float_i,gt0_txcharisk_i}),
+        .TX_DATA_OUT                    (gt0_frame_gen_data_i),
+        .TXCTRL_OUT                     (gt0_frame_gen_ctrl_i),
         .READ_COUNTER_OUT               (gt0_tx_read_counter_i),
 
         // System Interface
         .USER_CLK                        (gt0_txusrclk2_i),
         .SYSTEM_RESET                   (gt0_tx_system_reset_c)
     );
+
+    assign {gt0_txdata_float_i, gt0_txdata_i, gt0_txdata_float16_i} =
+        gt0_hv_packet_valid_i
+        ? {gt0_frame_gen_data_i[79:48], gt0_hv_packet_i, gt0_frame_gen_data_i[15:0]}
+        : gt0_frame_gen_data_i;
+
+    assign {gt0_txcharisk_float_i, gt0_txcharisk_i} = gt0_frame_gen_ctrl_i;
 
     //***********************************************************************//
     //                                                                       //
@@ -773,7 +817,11 @@ always @(posedge  gt0_txusrclk2_i or negedge gt0_txfsmresetdone_i)
         .USER_CLK                       (gt0_rxusrclk2_i),
         .SYSTEM_RESET                   (gt0_rx_system_reset_c),
         .ERROR_COUNT_OUT                (gt0_error_count_i),
-        .TRACK_DATA_OUT                 (gt0_track_data_i)
+        .TRACK_DATA_OUT                 (gt0_track_data_i),
+        .DEBUG_RX_DATA_ALIGNED_OUT      (gt0_rxdata_aligned_dbg_i),
+        .DEBUG_RX_DATA_TRACK_OUT        (gt0_rxdata_track_dbg_i),
+        .DEBUG_SEL_OUT                  (gt0_rxalign_sel_dbg_i),
+        .DEBUG_START_OF_PACKET_OUT      (gt0_rxstart_of_packet_dbg_i)
     );
 
 
@@ -868,7 +916,15 @@ assign DBG_GT0_RXCOMMADET      = gt0_rxcommadet_i;
 assign DBG_GT0_RXMCOMMAALIGNEN = gt0_rxmcommaalignen_i;
 assign DBG_GT0_RXPCOMMAALIGNEN = gt0_rxpcommaalignen_i;
 assign DBG_GT0_RXCLKCORCNT     = gt0_rxclkcorcnt_i;
+assign DBG_GT0_RXDATA_ALIGNED  = gt0_rxdata_aligned_dbg_i;
+assign DBG_GT0_RXDATA_TRACK    = gt0_rxdata_track_dbg_i;
+assign DBG_GT0_RXALIGN_SEL     = gt0_rxalign_sel_dbg_i;
+assign DBG_GT0_RXSTART_OF_PACKET = gt0_rxstart_of_packet_dbg_i;
 assign DBG_GT0_RXUSRCLK2       = gt0_rxusrclk2_i;
+assign DBG_HV_PACKET_OUT       = gt0_hv_packet_i;
+assign DBG_HV_CURRENT_ADDR     = gt0_hv_current_addr_i;
+assign DBG_HV_PACKET_VALID     = gt0_hv_packet_valid_i;
+assign DBG_HV_USING_INTERNAL_SOURCE = gt0_hv_using_internal_i;
 assign DBG_SOFT_RESET          = soft_reset_i;
 assign DBG_DRPCLK_HEARTBEAT    = drpclk_heartbeat_cnt[15];
 endmodule
