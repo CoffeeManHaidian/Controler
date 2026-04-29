@@ -136,6 +136,7 @@ module gtwizard_0_exdes #
     output wire         DBG_HV_PACKET_VALID,
     output wire         DBG_HV_USING_INTERNAL_SOURCE,
     output wire [31:0]  DBG_HV_RX_PACKET_OUT,
+    output wire         DBG_HV_RX_PACKET_VALID,
     output wire [15:0]  DBG_HV_RX_CURRENT_ADDR,
     output wire [15:0]  DBG_HV_RX_CURRENT_DATA,
     output wire [15:0]  DBG_HV_RX_EXPECTED_ADDR,
@@ -145,9 +146,12 @@ module gtwizard_0_exdes #
     output wire         DBG_HV_RX_SEQ_OK,
     output wire         DBG_HV_RX_INVALID_FILL,
     output wire [7:0]   DBG_HV_RX_SEQ_ERROR_COUNT,
+    input  wire [31:0]  HV_TX_PACKET_IN,
+    input  wire         HV_TX_PACKET_VALID,
+    input  wire         HV_USE_EXTERNAL_PACKET,
     output wire         DBG_SOFT_RESET,
     output wire         DBG_DRPCLK_HEARTBEAT
-);
+    );
 
     wire soft_reset_i;
     (*mark_debug = "TRUE" *) wire soft_reset_vio_i;
@@ -336,8 +340,10 @@ module gtwizard_0_exdes #
     wire            gt0_hv_packet_valid_i;
     wire    [15:0]  gt0_hv_current_addr_i;
     wire            gt0_hv_using_internal_i;
-    wire    [15:0]  gt0_hv_external_data_i;
-    wire            gt0_hv_external_valid_i;
+    wire    [31:0]  gt0_hv_tx_selected_packet_i;
+    wire            gt0_hv_tx_selected_valid_i;
+    wire    [15:0]  gt0_hv_tx_selected_addr_i;
+    wire            gt0_hv_tx_selected_internal_i;
     wire    [31:0]  gt0_hv_rx_packet_i;
     wire    [15:0]  gt0_hv_rx_current_addr_i;
     wire    [15:0]  gt0_hv_rx_current_data_i;
@@ -370,8 +376,14 @@ module gtwizard_0_exdes #
     reg     [19:0]  cnt_0 = 20'd0;
     reg             trig_ad9516 = 1'b0;
   
-    assign gt0_hv_external_data_i  = 16'h0000;
-    assign gt0_hv_external_valid_i = 1'b0;
+    assign gt0_hv_tx_selected_packet_i =
+        HV_USE_EXTERNAL_PACKET ? HV_TX_PACKET_IN : gt0_hv_packet_i;
+    assign gt0_hv_tx_selected_valid_i =
+        HV_USE_EXTERNAL_PACKET ? HV_TX_PACKET_VALID : gt0_hv_packet_valid_i;
+    assign gt0_hv_tx_selected_addr_i =
+        HV_USE_EXTERNAL_PACKET ? HV_TX_PACKET_IN[31:16] : gt0_hv_current_addr_i;
+    assign gt0_hv_tx_selected_internal_i =
+        HV_USE_EXTERNAL_PACKET ? 1'b0 : gt0_hv_using_internal_i;
 
     //--------------------- Chipscope Signals ---------------------------------
     (*mark_debug = "TRUE" *)wire   rxresetdone_vio_i;
@@ -749,22 +761,6 @@ always @(posedge  gt0_txusrclk2_i or negedge gt0_txfsmresetdone_i)
     // of your control and alignment characters.
 
 
-    hv_proto_tx gt0_hv_proto_tx
-    (
-        .clk                  (gt0_txusrclk2_i),
-        .rst                  (gt0_tx_system_reset_c),
-        .data_in              (gt0_hv_external_data_i),
-        .data_valid           (gt0_hv_external_valid_i),
-        .use_internal_source  (1'b1),
-        .addr_base            (16'h1000),
-        .addr_limit           (16'h11A4),
-        .frame_valid_count    (7'd97),
-        .packet_out           (gt0_hv_packet_i),
-        .packet_valid         (gt0_hv_packet_valid_i),
-        .current_addr         (gt0_hv_current_addr_i),
-        .using_internal_source(gt0_hv_using_internal_i)
-    );
-
     gtwizard_0_GT_FRAME_GEN #
     (
         .WORDS_IN_BRAM(EXAMPLE_WORDS_IN_BRAM)
@@ -782,8 +778,8 @@ always @(posedge  gt0_txusrclk2_i or negedge gt0_txfsmresetdone_i)
     );
 
     assign {gt0_txdata_float_i, gt0_txdata_i, gt0_txdata_float16_i} =
-        gt0_hv_packet_valid_i
-        ? {gt0_frame_gen_data_i[79:48], gt0_hv_packet_i, gt0_frame_gen_data_i[15:0]}
+        gt0_hv_tx_selected_valid_i
+        ? {gt0_frame_gen_data_i[79:48], gt0_hv_tx_selected_packet_i, gt0_frame_gen_data_i[15:0]}
         : gt0_frame_gen_data_i;
 
     assign {gt0_txcharisk_float_i, gt0_txcharisk_i} = gt0_frame_gen_ctrl_i;
@@ -852,25 +848,28 @@ always @(posedge  gt0_txusrclk2_i or negedge gt0_txfsmresetdone_i)
         (gt0_rxdisperr_i == 4'd0) &&
         (gt0_rxnotintable_i == 4'd0);
 
-    hv_proto_rx_mon gt0_hv_proto_rx_mon
+    hv_sfp_loopback_ctrl gt0_hv_sfp_loopback_ctrl
     (
-        .clk            (gt0_rxusrclk2_i),
-        .rst            (gt0_rx_system_reset_c),
-        .packet_in      (gt0_rxdata_track_dbg_i),
-        .packet_valid   (gt0_hv_rx_packet_valid_i),
-        .addr_base      (16'h1000),
-        .addr_limit     (16'h11A4),
-        .frame_valid_count(7'd97),
-        .packet_out     (gt0_hv_rx_packet_i),
-        .current_addr   (gt0_hv_rx_current_addr_i),
-        .current_data   (gt0_hv_rx_current_data_i),
-        .expected_addr  (gt0_hv_rx_expected_addr_i),
-        .packet_seen    (gt0_hv_rx_packet_seen_i),
-        .addr_in_range  (gt0_hv_rx_addr_in_range_i),
-        .seq_locked     (gt0_hv_rx_seq_locked_i),
-        .seq_ok         (gt0_hv_rx_seq_ok_i),
-        .invalid_fill   (gt0_hv_rx_invalid_fill_i),
-        .seq_error_count(gt0_hv_rx_seq_error_count_i)
+        .tx_clk               (gt0_txusrclk2_i),
+        .tx_rst               (gt0_tx_system_reset_c),
+        .rx_clk               (gt0_rxusrclk2_i),
+        .rx_rst               (gt0_rx_system_reset_c),
+        .rx_packet_in         (gt0_rxdata_track_dbg_i),
+        .rx_packet_valid      (gt0_hv_rx_packet_valid_i),
+        .tx_packet_out        (gt0_hv_packet_i),
+        .tx_packet_valid      (gt0_hv_packet_valid_i),
+        .tx_current_addr      (gt0_hv_current_addr_i),
+        .tx_using_internal_source(gt0_hv_using_internal_i),
+        .rx_current_packet    (gt0_hv_rx_packet_i),
+        .rx_current_addr      (gt0_hv_rx_current_addr_i),
+        .rx_current_data      (gt0_hv_rx_current_data_i),
+        .rx_expected_addr     (gt0_hv_rx_expected_addr_i),
+        .rx_packet_seen       (gt0_hv_rx_packet_seen_i),
+        .rx_addr_in_range     (gt0_hv_rx_addr_in_range_i),
+        .rx_invalid_fill      (gt0_hv_rx_invalid_fill_i),
+        .rx_seq_locked        (gt0_hv_rx_seq_locked_i),
+        .rx_seq_ok            (gt0_hv_rx_seq_ok_i),
+        .rx_seq_error_count   (gt0_hv_rx_seq_error_count_i)
     );
 
 
@@ -970,11 +969,12 @@ assign DBG_GT0_RXDATA_TRACK    = gt0_rxdata_track_dbg_i;
 assign DBG_GT0_RXALIGN_SEL     = gt0_rxalign_sel_dbg_i;
 assign DBG_GT0_RXSTART_OF_PACKET = gt0_rxstart_of_packet_dbg_i;
 assign DBG_GT0_RXUSRCLK2       = gt0_rxusrclk2_i;
-assign DBG_HV_PACKET_OUT       = gt0_hv_packet_i;
-assign DBG_HV_CURRENT_ADDR     = gt0_hv_current_addr_i;
-assign DBG_HV_PACKET_VALID     = gt0_hv_packet_valid_i;
-assign DBG_HV_USING_INTERNAL_SOURCE = gt0_hv_using_internal_i;
+assign DBG_HV_PACKET_OUT       = gt0_hv_tx_selected_packet_i;
+assign DBG_HV_CURRENT_ADDR     = gt0_hv_tx_selected_addr_i;
+assign DBG_HV_PACKET_VALID     = gt0_hv_tx_selected_valid_i;
+assign DBG_HV_USING_INTERNAL_SOURCE = gt0_hv_tx_selected_internal_i;
 assign DBG_HV_RX_PACKET_OUT    = gt0_hv_rx_packet_i;
+assign DBG_HV_RX_PACKET_VALID  = gt0_hv_rx_packet_valid_i;
 assign DBG_HV_RX_CURRENT_ADDR  = gt0_hv_rx_current_addr_i;
 assign DBG_HV_RX_CURRENT_DATA  = gt0_hv_rx_current_data_i;
 assign DBG_HV_RX_EXPECTED_ADDR = gt0_hv_rx_expected_addr_i;

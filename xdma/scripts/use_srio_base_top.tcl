@@ -23,6 +23,9 @@ set src_files [list \
     [file join $src_root "new" "sfp_srio_base_top.v"] \
     [file join $src_root "new" "hv_proto_tx.v"] \
     [file join $src_root "new" "hv_proto_rx_mon.v"] \
+    [file join $src_root "new" "hv_mmio_tx_reader.v"] \
+    [file join $src_root "new" "hv_mmio_rx_capture.v"] \
+    [file join $src_root "new" "hv_sfp_loopback_ctrl.v"] \
     [file join $vendor_root "example_design" "srio_base_shell.v"] \
     [file join $exdes_dir "gtwizard_0_exdes.v"] \
     [file join $exdes_dir "gtwizard_0_gt_frame_gen.v"] \
